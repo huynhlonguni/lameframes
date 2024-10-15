@@ -116,8 +116,8 @@ const VideoViewer = ({viewer, onClose, onSubmit, onLocalSearch}) => {
 							</div>
 						</div>
 						<div className="grid col-span-5 grid-cols-5 gap-2">
-							{nearest_keyframes.map((kf) => 
-								<Thumbnail video={video} keyframe={kf[0]} onClick={() => seekTo(kf[2])}/>
+							{nearest_keyframes.map((kf, i) => 
+								<Thumbnail key={i} video={video} keyframe={kf[0]} onClick={() => seekTo(kf[2])}/>
 							)}
 						</div>
 						<div className="grid grid-rows-2 gap-2">

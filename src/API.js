@@ -1,7 +1,7 @@
 import axios from "axios";
 import { SearchType } from "./SearchType";
 
-export const CheckImagesServer = async (url) => {
+export const CheckImageServer = async (url) => {
 	return axios.get(`${url}/L01_V001/1.jpg`);
 }
 

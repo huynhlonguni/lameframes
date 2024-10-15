@@ -134,12 +134,12 @@ const TabContent = ({content, updateContent, tab}) => {
 								</SelectTrigger>
 								<SelectContent className="w-full mt-1 p-2 rounded-lg shadow-lg">
 									{
-										SearchOptions.map((searchOpts) => 
-											<SelectGroup>
+										SearchOptions.map((searchOpts, i) => 
+											<SelectGroup key={i}>
 												<SelectLabel className="p-2">{searchOpts.name}</SelectLabel>
 												{
-													searchOpts.options.map((opts) => 
-														<SelectItem className="p-2 cursor-pointer hover:bg-slate-200 rounded-lg" value={opts}>
+													searchOpts.options.map((opts, i) => 
+														<SelectItem key={i} className="p-2 cursor-pointer hover:bg-slate-200 rounded-lg" value={opts}>
 															<SearchTypeRenderer type={opts}/>
 														</SelectItem>
 													)
@@ -176,9 +176,9 @@ const TabContent = ({content, updateContent, tab}) => {
 
 				</div>
 				<div className="min-h-0">
-					<div className="overflow-scroll grid grid-cols-6 gap-2 p-2 h-full">
-						{queryResult.map((r) => 
-							<Thumbnail video={r.video} keyframe={r.frameid} onClick={() => setViewer([r.video, r.frameid])}/>
+					<div className="overflow-y-scroll grid grid-cols-6 gap-2 p-2 h-full no-scrollbar">
+						{queryResult.map((r, i) => 
+							<Thumbnail key={i} video={r.video} keyframe={r.frameid} onClick={() => setViewer([r.video, r.frameid])}/>
 						)}
 					</div>
 				</div>

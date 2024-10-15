@@ -1,10 +1,9 @@
-
 import { useAppContext } from "./Context";
 
 const Thumbnail = ({video, keyframe, onClick}) => {
-	const {imagesServer} = useAppContext();
+	const {imageServer} = useAppContext();
 
-	const url = `${imagesServer}/${video}/${keyframe}.jpg`
+	const url = `${imageServer}/${video}/${keyframe}.jpg`
 
 	return(
 		<div className="w-full p-2 rounded-lg bg-slate-200 cursor-pointer" onClick={onClick}>
