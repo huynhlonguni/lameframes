@@ -1,65 +1,70 @@
 import Tab from './Tab'
-import { House, ChevronDown } from 'lucide-react';
+import { Plus, ChevronDown, X, Copy, Loader, CircleCheck, CircleX } from 'lucide-react';
 
-import { cn } from '@/lib/utils';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
-	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
-import { useEffect, useRef } from 'react';
-
-import QueryNameRenderer from './QueryNameRenderer';
+import { SearchTypeRenderer } from './SearchType';
 import { useHorizontalScroll } from './useHorizontalScroll';
+import { useAppContext } from './Context';
+import { SearchType } from './SearchType';
+import { cn } from '@/lib/utils';
 
-const DropdownTab = ({className, id, active, onClick, children}) => {
-	const tabRef = useRef(null);
-
-	useEffect(() => {
-		if (active == id)
-			tabRef.current.scrollIntoView();
-	}, [active, id]);
-
-	return(
-		<DropdownMenuItem value={id} onClick={onClick} ref={tabRef}
-				className={cn("cursor-pointer hover:bg-white border-t border-b border-slate-200 rounded-md p-2", id == active && "bg-white", className)}
-		>
-			{children}
-		</DropdownMenuItem>
-	)
-}
-
-const TabBar = ({tab, setTab, tabList}) => {
+const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 	const scrollRef = useHorizontalScroll();
+	const {searchServer, setSearchServer, imagesServer, setImagesServer, searchServerOkay, imagesServerOkay} = useAppContext();
 
 	return(
 		<div className="w-full bg-slate-300 flex">
-			<Tab id="0" active={tab} onClick={() => setTab(0)} className={cn("p-4", tab != 0 && "border-r-2 border-slate-400 rounded-none")}><House /></Tab>
-			<div ref={scrollRef} className='w-full h-full grid grid-flow-col overflow-x-scroll'>
+			<div ref={scrollRef} className='w-full h-full flex overflow-x-scroll no-scrollbar'>
 				{
 					tabList.map((t, i) =>
-						<Tab id={i + 1} active={tab} onClick={() => setTab(i + 1)}>
-							<QueryNameRenderer className={""} query={t}/>
+						<Tab id={i} active={tab} onClick={() => setTab(i)}>
+							<SearchTypeRenderer type={t.SearchMethod}/>
+							<div className='flex gap-0.5' onClick={(e) => e.stopPropagation()}>
+								<div onClick={() => onDuplicate(i)} className={cn('text-slate-400 cursor-pointer hover:bg-slate-200 p-0.5 m-0.5 rounded-md', tab == i && "hover:bg-slate-300")}>
+									<Copy className='size-4' />
+								</div>
+								<div onClick={() => onClose(i)} className={cn('text-slate-400 cursor-pointer hover:bg-slate-200 p-0.5 m-0.5 rounded-md', tab == i && "hover:bg-slate-300")}>
+									<X className='size-4' />
+								</div>
+							</div>
+							
 						</Tab>
 					)
 				}
+				<div onClick={onAdd} className="p-3 m-1 min-w-max select-none rounded-lg hover:bg-slate-100 cursor-pointer max-w-max">
+					<div className="flex justify-center place-items-center h-full">
+						<Plus />
+					</div>
+				</div>
 			</div>
 			<DropdownMenu modal={false}>
 				<DropdownMenuTrigger className='outline-none border-l-2 border-slate-400 hover:bg-white'>
-					<ChevronDown className='m-4'/>
+					<ChevronDown className='size-6 m-4'/>
 				</DropdownMenuTrigger>
-				<DropdownMenuContent className="min-w-48 bg-slate-200 p-0 rounded-lg">
-					<div className="p-2">
-						<div className="max-h-96 overflow-y-scroll no-scrollbar">
-						{
-							tabList.map((t, i) =>
-								<DropdownTab id={i + 1} active={tab} onClick={() => setTab(i + 1)}>
-									<QueryNameRenderer className={""} query={t} verbose={true}/>
-								</DropdownTab>
-							)
-						}
+				<DropdownMenuContent className="min-w-48 m-2 bg-slate-300 rounded-lg p-4 space-y-2 shadow-2xl">
+					<div className="flex flex-col gap-1">
+						<label className='font-bold px-1'>Search Server</label>
+						<div className="flex justify-between place-items-center rounded-lg bg-white">
+							<input type="text" id="search_server" className='py-2 pl-2 rounded-lg outline-none'
+								value={searchServer} onChange={(e) => setSearchServer(e.target.value)}/>
+							{searchServerOkay == null && <Loader className='mx-2 animate-spin'/>}
+							{searchServerOkay == false && <CircleX className='mx-2 text-red-400'/>}
+							{searchServerOkay == true && <CircleCheck className='mx-2 text-green-600'/>}
+							
+						</div>
+					</div>
+					<div className="flex flex-col gap-1">
+						<label className='font-bold px-1'>Images Server</label>
+						<div className="flex justify-between place-items-center rounded-lg bg-white">
+							<input type="text" id="images_server" className='py-2 pl-2 rounded-lg outline-none'
+								value={imagesServer} onChange={(e) => setImagesServer(e.target.value)}/>
+							{imagesServerOkay == null && <Loader className='mx-2 animate-spin'/>}
+							{imagesServerOkay == false && <CircleX className='mx-2 text-red-400'/>}
+							{imagesServerOkay == true && <CircleCheck className='mx-2 text-green-600'/>}
 						</div>
 					</div>
 				</DropdownMenuContent>
