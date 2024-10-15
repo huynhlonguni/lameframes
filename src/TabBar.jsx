@@ -20,7 +20,7 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 				{
 					tabList.map((t, i) =>
 						<Tab key={i} id={i} active={tab} onClick={() => setTab(i)}>
-							<SearchTypeRenderer type={t.SearchMethod}/>
+							<SearchTypeRenderer type={t.SearchMethod} className="text-slate-600"/>
 							<div className='flex gap-0.5' onClick={(e) => e.stopPropagation()}>
 								<div onClick={() => onDuplicate(i)} className={cn('text-slate-400 cursor-pointer hover:bg-slate-200 p-0.5 m-0.5 rounded-md', tab == i && "hover:bg-slate-300")}>
 									<Copy className='size-4' />
@@ -35,7 +35,7 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 				}
 				<div onClick={onAdd} className="p-3 m-1 min-w-max select-none rounded-lg hover:bg-slate-100 cursor-pointer max-w-max">
 					<div className="flex justify-center place-items-center h-full">
-						<Plus />
+						<Plus className='text-slate-500'/>
 					</div>
 				</div>
 			</div>

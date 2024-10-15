@@ -14,7 +14,8 @@ export const CheckSearchServer = async (url) => {
 export const SingleSearch = async (url, query, k) => {
 	return axios.post(`${url}/api/single-search`, {
 		query: query,
-		k: k
+		k: k,
+		black_list: [],
 	});
 }
 
@@ -37,9 +38,10 @@ export const LocalSearch = async (url, query, video_name, k, use_with_fusion, fa
 
 export const MultiSceneSearch = async (url, query, step, k) => {
 	return axios.post(`${url}/api/multi-scene-search`, {
-		query: query,
+		queries: [query],
 		step: step,
-		k: k
+		k: k,
+		black_list: [],
 	});
 }
 

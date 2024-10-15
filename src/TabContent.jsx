@@ -163,7 +163,9 @@ const TabContent = ({content, updateContent, tab}) => {
 					</div>
 					<div className="col-span-9">
 						<div className="w-full">
-							<TextareaAutosize value={content["Query"]} onChange={(e) => updateValue("Query", e.target.value)} className="w-full p-2 resize-none rounded-lg outline-none" />
+							<TextareaAutosize autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+												value={content["Query"]} onChange={(e) => updateValue("Query", e.target.value)}
+												className="w-full p-2 resize-none rounded-lg outline-none" />
 						</div>
 					</div>
 					<div className="col-span-1">
