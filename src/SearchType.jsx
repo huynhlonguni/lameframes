@@ -6,10 +6,10 @@ export const SearchType = Object.freeze({
 	SINGLE_SEARCH: 1,
 	FUSION_SEARCH: 2,
 	LOCAL_SEARCH: 3,
-	MULTI_SCENE_SEARCH: 4,
-	HIERACHICAL_SEARCH: 5,
+	GROUP_SEARCH: 4,
+	HIERARCHY_SEARCH: 5,
 	SUBTITLE_MATCH: 6,
-	SUBTITLE_FUZZ: 7,
+	OCR_MATCH: 7,
 });
 
 export const SearchTypeName = (type) => {
@@ -18,10 +18,10 @@ export const SearchTypeName = (type) => {
 		case SearchType.SINGLE_SEARCH: return 'Single Search';
 		case SearchType.FUSION_SEARCH: return 'Fusion Search';
 		case SearchType.LOCAL_SEARCH: return 'Local Search';
-		case SearchType.MULTI_SCENE_SEARCH: return 'Multi Scene Search';
-		case SearchType.HIERACHICAL_SEARCH: return 'Hierachical Search';
+		case SearchType.GROUP_SEARCH: return 'Group Search';
+		case SearchType.HIERARCHY_SEARCH: return 'Hierarchy Search';
 		case SearchType.SUBTITLE_MATCH: return 'Subtitle Match';
-		case SearchType.SUBTITLE_FUZZ: return 'Subtitle Fuzz';
+		case SearchType.OCR_MATCH: return 'OCR Match';
 	}
 }
 
@@ -31,10 +31,10 @@ export const SearchTypeIcon = ({type, className}) => {
 		case SearchType.SINGLE_SEARCH: return <View className={className}/>;
 		case SearchType.FUSION_SEARCH: return <Blend className={className}/>;
 		case SearchType.LOCAL_SEARCH: return <Locate className={className}/>;
-		case SearchType.MULTI_SCENE_SEARCH: return <Images className={className}/>;
-		case SearchType.HIERACHICAL_SEARCH: return <Layers className={className}/>;
+		case SearchType.GROUP_SEARCH: return <Images className={className}/>;
+		case SearchType.HIERARCHY_SEARCH: return <Layers className={className}/>;
 		case SearchType.SUBTITLE_MATCH: return <TextSearch className={className}/>;
-		case SearchType.SUBTITLE_FUZZ: return <Regex className={className}/>;
+		case SearchType.OCR_MATCH: return <Regex className={className}/>;
 	}
 }
 
@@ -42,9 +42,72 @@ export const SearchTypeRenderer = ({type, className}) => {
 	if (type == null) type = SearchType.NONE;
 
 	return(
-		<div className={cn("flex place-items-center gap-2", className)}>
+		<div className={cn("flex place-items-center gap-2 h-full", className)}>
 			<SearchTypeIcon type={type} className="size-5"/>
 			<div>{SearchTypeName(type)}</div>
 		</div>
 	)
 }
+
+export const SearchArguments = {};
+SearchArguments[SearchType.SINGLE_SEARCH] = {
+	single: true,
+	multiple: false,
+	blacklist: true,
+	args: {
+		K: 'text',
+		Translate: 'checkbox',
+	}
+};
+SearchArguments[SearchType.FUSION_SEARCH] = {
+	single: false,
+	multiple: true,
+	blacklist: false,
+	args: {
+		K: 'text',
+		Translate: 'checkbox',
+	}
+};
+SearchArguments[SearchType.LOCAL_SEARCH] = {
+	single: true,
+	multiple: false,
+	blacklist: false,
+	args: {
+		K: 'text',
+		Video: 'text',
+		Translate: 'checkbox',
+		// Fusion: 'checkbox'
+	}
+};
+SearchArguments[SearchType.GROUP_SEARCH] = {
+	single: true,
+	multiple: false,
+	blacklist: true,
+	args: {
+		K: 'text',
+		Step: 'text',
+		Translate: 'checkbox',
+	}
+};
+SearchArguments[SearchType.HIERARCHY_SEARCH] = {
+	single: true,
+	multiple: false,
+	blacklist: false,
+	args: {
+		K1: 'text',
+		K2: 'text',
+		Translate: 'checkbox',
+	}
+};
+SearchArguments[SearchType.SUBTITLE_MATCH] = {
+	single: true,
+	multiple: false,
+	blacklist: false,
+	args: {}
+};
+SearchArguments[SearchType.OCR_MATCH] = {
+	single: true,
+	multiple: false,
+	blacklist: false,
+	args: {}
+};

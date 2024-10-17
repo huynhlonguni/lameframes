@@ -11,24 +11,31 @@ export const CheckSearchServer = async (url) => {
 	});
 }
 
-export const SingleSearch = async (url, query, k) => {
+export const SingleSearch = async (url, query, translate, k) => {
 	return axios.post(`${url}/api/single-search`, {
 		query: query,
+		translate: translate,
 		k: k,
 		black_list: [],
 	});
 }
 
-export const FusionSearch = async (url, queries, k) => {
+export const FusionSearch = async (url, queries, translate, k) => {
+	let tmp = {
+
+	}
+	tmp[queries] = 1;
 	return axios.post(`${url}/api/fusion-search`, {
-		queries: queries,
+		queries: tmp,
+		translate: translate,
 		k: k
 	});
 }
 
-export const LocalSearch = async (url, query, video_name, k, use_with_fusion, fact_queries) => {
+export const LocalSearch = async (url, query, translate, video_name, k, use_with_fusion, fact_queries) => {
 	return axios.post(`${url}/api/local-search`, {
 		query: query,
+		translate: translate,
 		video_name: video_name,
 		k: k,
 		use_with_fusion: use_with_fusion,
@@ -36,18 +43,20 @@ export const LocalSearch = async (url, query, video_name, k, use_with_fusion, fa
 	});
 }
 
-export const MultiSceneSearch = async (url, query, step, k) => {
+export const GroupSearch = async (url, query, translate, step, k) => {
 	return axios.post(`${url}/api/multi-scene-search`, {
 		queries: [query],
+		translate: translate,
 		step: step,
 		k: k,
 		black_list: [],
 	});
 }
 
-export const HierarchicalSearch = async (url, query, k1, k2, use_with_fusion, fact_queries) => {
+export const HierarchySearch = async (url, query, translate, k1, k2, use_with_fusion, fact_queries) => {
 	return axios.post(`${url}/api/hierarchical-search`, {
 		query: query,
+		translate: translate,
 		k1: k1,
 		k2: k2,
 		use_with_fusion: use_with_fusion,
@@ -63,8 +72,8 @@ export const SubtitleMatch = async (url, query) => {
 	});
 }
 
-export const SubtitleFuzz = async (url, query) => {
-	return axios.get(`${url}/api/fuzzy-sub-es`, {
+export const OCRMatch = async (url, query) => {
+	return axios.get(`${url}/api/match-ocr-es`, {
 		params: {
 			query: query
 		}
@@ -77,6 +86,7 @@ export const SubtitleIndexDrop = async (url) => {
 
 export const SearchHelper = async (type, url, content) => {
 	const query = content["Query"];
+	const translate = content["Translate"];
 	const k = content["K"];
 	const k1 = content["K1"];
 	const k2 = content["K2"];
@@ -87,19 +97,19 @@ export const SearchHelper = async (type, url, content) => {
 
 	switch (type) {
 		case SearchType.SINGLE_SEARCH:
-			return SingleSearch(url, query, k);
+			return SingleSearch(url, query, translate, k);
 		case SearchType.FUSION_SEARCH:
-			return FusionSearch(url, query, k);
+			return FusionSearch(url, query, translate, k);
 		case SearchType.LOCAL_SEARCH:
-			return LocalSearch(url, query, video_name, k, use_with_fusion, fact_queries);
-		case SearchType.MULTI_SCENE_SEARCH:
-			return MultiSceneSearch(url, query, step, k);
-		case SearchType.HIERACHICAL_SEARCH:
-			return HierarchicalSearch(url, query, k1, k2, use_with_fusion, fact_queries);
+			return LocalSearch(url, query, translate, video_name, k, use_with_fusion, fact_queries);
+		case SearchType.GROUP_SEARCH:
+			return GroupSearch(url, query, translate, step, k);
+		case SearchType.HIERARCHY_SEARCH:
+			return HierarchySearch(url, query, translate, k1, k2, use_with_fusion, fact_queries);
 		case SearchType.SUBTITLE_MATCH:
 			return SubtitleMatch(url, query);
-		case SearchType.SUBTITLE_FUZZ:
-			return SubtitleFuzz(url, query);
+		case SearchType.OCR_MATCH:
+			return OCRMatch(url, query);
 		default:
 			return null;
 	}

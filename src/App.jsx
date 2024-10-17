@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import useLocalStorage from 'use-local-storage';
-import TabContent from './TabContent';
-import TabBar from './TabBar'
+import TabContent from './components/TabContent';
+import TabBar from './components/TabBar'
 import { CheckSearchServer, CheckImageServer } from './API';
 import { AppContext } from './Context';
 import { SearchType } from './SearchType';
@@ -12,12 +12,15 @@ import 'react-toastify/dist/ReactToastify.css';
 const defaultTab = {
 	SearchMethod: SearchType.SINGLE_SEARCH,
 	Query: '',
+	Queries: [''],
+	Translate: true,
 	K: 30,
 	K1: 15,
 	K2: 5,
 	Step: 2,
 	Video: 'L01_V001',
-	Result: []
+	Result: [],
+	ResultMethod: SearchType.NONE,
 }
 
 function App() {
@@ -26,27 +29,24 @@ function App() {
 	const [tabContent, setTabContent] = useLocalStorage("tab_content", [structuredClone(defaultTab)]);
 
 	const [searchServer, setSearchServer] = useLocalStorage("search_server", "http://localhost:5001");
-	const [searchServerOkay, setSearchServerOkay] = useState(null);
 	const [imageServer, setImageServer] = useLocalStorage("image_server", "https://aicf2.vercel.app");
-	const [imageServerOkay, setImageServerOkay] = useState(null);
+	const [username, setUsername] = useLocalStorage("username", "team41");
+	const [password, setPassword] = useLocalStorage("password", "");
+	const [userId, setUserId] = useLocalStorage("user_id", "");
+	const [sessionId, setSessionId] = useLocalStorage("session_id", "");
+	const [evaluationId, setEvaluationId] = useLocalStorage("evaluation_id", "");
 
 	useEffect(() => {
-		setSearchServerOkay(false);
 		CheckSearchServer(searchServer).then((res) => {
-			setSearchServerOkay(true);
 		}).catch((e) => {
 			console.error(`Failed to connect to search server at ${searchServer}`);
-			setSearchServerOkay(false);
 		}) 
 	}, [searchServer]);
 
 	useEffect(() => {
-		setImageServerOkay(false);
 		CheckImageServer(imageServer).then((res) => {
-			setImageServerOkay(true);
 		}).catch((e) => {
 			console.warn(`Failed to connect to image server at ${imageServer}`);
-			setImageServerOkay(false);
 		}) 
 	}, [imageServer]);
 
@@ -89,7 +89,11 @@ function App() {
 	return (
 		<AppContext.Provider value={{
 			searchServer, setSearchServer, imageServer, setImageServer,
-			searchServerOkay, imageServerOkay, addNewTab
+			username, setUsername, password, setPassword,
+			addNewTab,
+			userId, setUserId,
+			sessionId, setSessionId,
+			evaluationId, setEvaluationId
 		}}>
 			<ToastContainer/>
 			<div className='w-full h-dvh flex flex-col'>

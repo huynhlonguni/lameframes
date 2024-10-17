@@ -25,7 +25,7 @@ def create_master_json(folder_path, output_file):
 		json.dump(master_data, master_json_file, ensure_ascii=False, indent=4)
 
 folder_path = 'media-info'
-output_file = 'src/media-info.json'
+output_file = 'src/utils/media-info.json'
 create_master_json(folder_path, output_file)
 
 print(f'Master JSON file created: {output_file}')

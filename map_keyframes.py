@@ -7,7 +7,7 @@ def shortenNumber(string):
 
 	return int(num_float) if num_float.is_integer() else num_float
 
-def csv_to_json(folder_path, output_file, off_by_one):
+def csv_to_json(folder_path, output_file, off_by_one, skip_details):
 	master_data = {}
 
 	for filename in os.listdir(folder_path):
@@ -31,7 +31,7 @@ def csv_to_json(folder_path, output_file, off_by_one):
 				# Store data in master_data using the csv_key
 				master_data[csv_key] = {
 					"fps": fps,
-					"frames": frames
+					"frames": {"length": len(frames)} if skip_details else frames
 				}
 
 	# Write the master JSON file
@@ -43,7 +43,12 @@ def csv_to_json(folder_path, output_file, off_by_one):
 # csv_to_json(folder_path, output_file, off_by_one=False) # Keyframe tự tạo đánh từ 1, keyframe BTC đánh từ 0
 # print(f'Master JSON file created: {output_file}')
 
-folder_path = 'map-keyframes-v2'
-output_file = 'src/map-keyframes.json'
-csv_to_json(folder_path, output_file, off_by_one=True) # Keyframe tự tạo đánh từ 1, keyframe BTC đánh từ 0
+# folder_path = 'map-keyframes-v2'
+# output_file = 'src/map-keyframes.json'
+# csv_to_json(folder_path, output_file, off_by_one=True) # Keyframe tự tạo đánh từ 1, keyframe BTC đánh từ 0
+# print(f'Master JSON file created: {output_file}')
+
+folder_path = 'map-keyframes-v3'
+output_file = 'src/utils/map-keyframes.json'
+csv_to_json(folder_path, output_file, off_by_one=False, skip_details=True) # Keyframe tự tạo đánh từ 1, keyframe BTC đánh từ 0
 print(f'Master JSON file created: {output_file}')
