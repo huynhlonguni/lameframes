@@ -6,7 +6,7 @@ const ArgumentField = ({label, type, value, setValue}) => {
 			<>
 				<div className="font-bold">{label}</div>
 				{/* <Switch /> */}
-				<input type={type} className="min-w-0 p-2 rounded-lg outline-none" value={value} onChange={(e) => setValue(e.target.checked)} />
+				<input type={type} className="min-w-0 p-2 rounded-lg outline-none" checked={value} onChange={(e) => setValue(e.target.checked)} />
 			</>
 		)
 

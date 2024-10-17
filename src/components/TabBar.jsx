@@ -45,6 +45,7 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 				toast("Retrieved Evaluation ID", {
 					closeOnClick: true
 				})
+				setEvaluationId(res2.data[0].id);
 				console.log(res2.data)
 			})
 			.catch((err2) => {

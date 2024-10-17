@@ -28,6 +28,8 @@ function App() {
 
 	const [tabContent, setTabContent] = useLocalStorage("tab_content", [structuredClone(defaultTab)]);
 
+	const [qa, setQA] = useState('');
+
 	const [searchServer, setSearchServer] = useLocalStorage("search_server", "http://localhost:5001");
 	const [imageServer, setImageServer] = useLocalStorage("image_server", "https://aicf2.vercel.app");
 	const [username, setUsername] = useLocalStorage("username", "team41");
@@ -93,7 +95,8 @@ function App() {
 			addNewTab,
 			userId, setUserId,
 			sessionId, setSessionId,
-			evaluationId, setEvaluationId
+			evaluationId, setEvaluationId,
+			qa, setQA
 		}}>
 			<ToastContainer/>
 			<div className='w-full h-dvh flex flex-col'>

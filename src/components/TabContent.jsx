@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import VideoViewer from "./VideoViewer";
 import QueryResult from "./QueryResult";
 import ArgumentField from "./ArgumentField";
+import { SubmissionSubmitKIS, SubmissionSubmitQA } from "../SubmissionAPI";
 
 const SearchOptions = [
 	{name: "Image Search", options: [
@@ -38,6 +39,8 @@ const TabContent = ({content, updateContent, tab}) => {
 	const {searchServer, addNewTab} = useAppContext();
 
 	const [isSearching, setIsSearching] = useState(false);
+
+	const {qa, sessionId, evaluationId} = useAppContext();
 
 	const searchMethod = content["SearchMethod"];
 	const queryResult = content["Result"];
@@ -98,6 +101,52 @@ const TabContent = ({content, updateContent, tab}) => {
 		}
 	}
 
+	const submit = (video, frameMS) => {
+		if (!qa || qa == '') {
+			SubmissionSubmitKIS(sessionId, evaluationId, video, frameMS)
+			.then((res) => {
+				console.log(err);
+				if (res.data.submission != "CORRECT") {
+					toast.error(`Submission wrong`, {
+						closeOnClick: true
+					})
+					return;
+				}
+				toast(`Submit successful!`, {
+					closeOnClick: true
+				})
+			})
+			.catch((err) => {
+				toast.error(`Submit failed: ${err.response.data.description}`, {
+					closeOnClick: true
+				})
+				console.log(err);
+			})
+			return;
+		}
+
+		SubmissionSubmitQA(sessionId, evaluationId, qa, video, frameMS)
+		.then((res) => {
+			console.log(err);
+			if (res.data.submission != "CORRECT") {
+				toast.error(`Submission wrong`, {
+					closeOnClick: true
+				})
+				return;
+			}
+			toast(`Submit successful!`, {
+				closeOnClick: true
+			})
+		})
+		.catch((err) => {
+			toast.error(`Submit failed: ${err.response.data.description}`, {
+				closeOnClick: true
+			})
+			console.log(err);
+		})
+		return;
+	}
+
 	return(
 		<>
 		{
@@ -105,7 +154,7 @@ const TabContent = ({content, updateContent, tab}) => {
 			createPortal(
 				<VideoViewer viewer={viewer} setViewer={setViewer}
 							onClose={() => setViewer(null)}
-							onSubmit={() => {}}
+							submit={submit}
 							onLocalSearch={() => {
 									addNewTab({
 										SearchMethod: SearchType.LOCAL_SEARCH,
@@ -149,7 +198,7 @@ const TabContent = ({content, updateContent, tab}) => {
 								</SelectContent>
 							</Select>
 						</div>
-						<div className="flex shrink gap-2 empty:hidden">
+						<div className="grid grid-cols-2 shrink gap-2 empty:hidden">
 							{ searchMethod in SearchArguments && 
 								Object.entries(SearchArguments[searchMethod].args).map(([k, v], i) => 
 									<div key={i} className="flex flex-col gap-2">

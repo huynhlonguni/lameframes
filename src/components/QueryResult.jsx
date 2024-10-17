@@ -39,7 +39,7 @@ const QueryResult = ({result, type, setViewer, className}) => {
 						<CollapsibleTrigger>
 							<div className="flex gap-2 font-bold place-items-center">
 								<ChevronsUpDown className="size-3"/>
-								<div>{r["video group"]}</div>
+								<div>#{i+1} {r["video group"]}</div>
 							</div>
 						</CollapsibleTrigger>
 						<CollapsibleContent className="grid grid-cols-6 gap-2 min-w-0">

@@ -55,7 +55,7 @@ SearchArguments[SearchType.SINGLE_SEARCH] = {
 	multiple: false,
 	blacklist: true,
 	args: {
-		K: 'text',
+		K: 'number',
 		Translate: 'checkbox',
 	}
 };
@@ -64,7 +64,7 @@ SearchArguments[SearchType.FUSION_SEARCH] = {
 	multiple: true,
 	blacklist: false,
 	args: {
-		K: 'text',
+		K: 'number',
 		Translate: 'checkbox',
 	}
 };
@@ -73,7 +73,7 @@ SearchArguments[SearchType.LOCAL_SEARCH] = {
 	multiple: false,
 	blacklist: false,
 	args: {
-		K: 'text',
+		K: 'number',
 		Video: 'text',
 		Translate: 'checkbox',
 		// Fusion: 'checkbox'
@@ -84,8 +84,8 @@ SearchArguments[SearchType.GROUP_SEARCH] = {
 	multiple: false,
 	blacklist: true,
 	args: {
-		K: 'text',
-		Step: 'text',
+		K: 'number',
+		Step: 'number',
 		Translate: 'checkbox',
 	}
 };
@@ -94,8 +94,8 @@ SearchArguments[SearchType.HIERARCHY_SEARCH] = {
 	multiple: false,
 	blacklist: false,
 	args: {
-		K1: 'text',
-		K2: 'text',
+		K1: 'number',
+		K2: 'number',
 		Translate: 'checkbox',
 	}
 };
