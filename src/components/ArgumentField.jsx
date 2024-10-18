@@ -1,6 +1,17 @@
 import { Switch } from "@/components/ui/switch"
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select"
 
-const ArgumentField = ({label, type, value, setValue}) => {
+  
+const ArgumentField = ({arg, value, setValue}) => {
+	const type = arg.type;
+	const label = arg.name;
+
 	if (type == 'checkbox')
 		return(
 			<>
@@ -9,6 +20,31 @@ const ArgumentField = ({label, type, value, setValue}) => {
 					<Switch className="data-[state=checked]:bg-slate-500 data-[state=unchecked]:bg-slate-300" checked={value} onCheckedChange={(checked) => setValue(checked)} />
 				</div>
 			</>
+		)
+
+	if (type == 'select')
+		return(
+			<>
+				<div className="font-bold">{label}</div>
+				<Select value={value}
+						onValueChange={(value) => {
+							setValue(value);
+						}} required={arg.required}>
+					<SelectTrigger className="outline-none">
+						<SelectValue/>
+					</SelectTrigger>
+					<SelectContent className="max-w-max">
+						{
+							arg.value.map((v, i) => 
+								<SelectItem key={i} value={v.value}>
+									{v.name}
+								</SelectItem>
+							)
+						}
+					</SelectContent>
+				</Select>
+			</>
+
 		)
 
 	return(

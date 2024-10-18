@@ -167,7 +167,7 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 					<DropdownMenuSeparator className="bg-slate-300 h-[2px] mt-2 rounded-full w-5/6 mx-auto"/>
 					<Dialog>
 						<DialogTrigger>
-							<div className='cursor-pointer select-none flex gap-2 p-2 place-items-center justify-center w-full rounded-lg bg-cyan-600 font-bold text-white'>
+							<div className='cursor-pointer select-none flex gap-2 p-2 place-items-center justify-center w-full rounded-lg bg-cyan-600 hover:bg-cyan-500 font-bold text-white'>
 								<UserRound className='size-4'/>
 								<div className=''>Account Management</div>
 							</div>
@@ -186,11 +186,11 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 											value={password} onChange={(e) => setPassword(e.target.value)}/>
 								</div>
 								<div className='grid grid-cols-2 gap-2'>
-									<div onClick={login} className='cursor-pointer select-none flex gap-2 p-2 place-items-center justify-center w-full rounded-lg bg-cyan-600 font-bold text-white'>
+									<div onClick={login} className='cursor-pointer select-none flex gap-2 p-2 place-items-center justify-center w-full rounded-lg bg-cyan-600 hover:bg-cyan-500 font-bold text-white'>
 										<KeyRound className='size-4'/>
 										<div className=''>Login</div>
 									</div>
-									<div onClick={getIds} className='cursor-pointer select-none flex gap-2 p-2 place-items-center justify-center w-full rounded-lg bg-green-600 border font-bold text-white'>
+									<div onClick={getIds} className='cursor-pointer select-none flex gap-2 p-2 place-items-center justify-center w-full rounded-lg bg-green-600 hover:bg-green-500 border font-bold text-white'>
 										<IdCard className='size-4'/>
 										<div className=''>Get IDs</div>
 									</div>
@@ -214,7 +214,7 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 													<div className="font-semibold">Description</div>
 													<div>{e.templateDescription}</div>
 												</div>
-												<div onClick={() => {setEvaluationId(e.id)}} className={cn('flex gap-2 place-items-center px-2 py-1 select-none cursor-pointer max-w-max bg-slate-500 rounded-md text-white', e.id == evaluationId && 'bg-green-600')}>
+												<div onClick={() => {setEvaluationId(e.id)}} className={cn('flex gap-2 place-items-center px-2 py-1 select-none cursor-pointer max-w-max bg-slate-500 hover:bg-slate-400 rounded-md text-white', e.id == evaluationId && 'bg-green-600 hover:bg-green-600 cursor-default')}>
 													{e.id == evaluationId ? 
 													<>
 														<Check className='size-4'/>

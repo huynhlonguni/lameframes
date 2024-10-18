@@ -18,6 +18,8 @@ const defaultTab = {
 	K2: 5,
 	Step: 2,
 	Video: 'L01_V001',
+	Frame: 123,
+	Sort: 'max',
 	Result: [],
 	ResultMethod: SearchType.NONE,
 }

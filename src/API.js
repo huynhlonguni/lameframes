@@ -43,24 +43,26 @@ export const LocalSearch = async (url, query, translate, video_name, k, use_with
 	});
 }
 
-export const GroupSearch = async (url, query, translate, step, k) => {
+export const GroupSearch = async (url, query, translate, step, k, sort) => {
 	return axios.post(`${url}/api/multi-scene-search`, {
 		queries: [query],
 		translate: translate,
 		step: step,
 		k: k,
 		black_list: [],
+		sort_by: sort
 	});
 }
 
-export const HierarchySearch = async (url, query, translate, k1, k2, use_with_fusion, fact_queries) => {
+export const HierarchySearch = async (url, query, translate, k1, k2, use_with_fusion, fact_queries, sort) => {
 	return axios.post(`${url}/api/hierarchical-search`, {
 		query: query,
 		translate: translate,
 		k1: k1,
 		k2: k2,
 		use_with_fusion: use_with_fusion,
-		fact_queries: fact_queries
+		fact_queries: fact_queries,
+		sort_by: sort
 	});
 }
 
@@ -108,6 +110,7 @@ export const SearchHelper = async (type, url, content) => {
 	const frame = content["Frame"];
 	const use_with_fusion = content["Fusion"];
 	const fact_queries = content["Queries"];
+	const sort = content["Sort"];
 
 	switch (type) {
 		case SearchType.SINGLE_SEARCH:
@@ -117,9 +120,9 @@ export const SearchHelper = async (type, url, content) => {
 		case SearchType.LOCAL_SEARCH:
 			return LocalSearch(url, query, translate, video_name, k, use_with_fusion, fact_queries);
 		case SearchType.GROUP_SEARCH:
-			return GroupSearch(url, query, translate, step, k);
+			return GroupSearch(url, query, translate, step, k, sort);
 		case SearchType.HIERARCHY_SEARCH:
-			return HierarchySearch(url, query, translate, k1, k2, use_with_fusion, fact_queries);
+			return HierarchySearch(url, query, translate, k1, k2, use_with_fusion, fact_queries, sort);
 		case SearchType.SUBTITLE_MATCH:
 			return SubtitleMatch(url, query);
 		case SearchType.FRAME_RELATED_SEARCH:

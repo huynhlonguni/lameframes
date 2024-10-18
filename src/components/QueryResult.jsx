@@ -36,7 +36,7 @@ const QueryResult = ({result, type, setViewer, className}) => {
 			<div className={cn("", className)}>
 				{result.result.map((r, i) =>
 					<Collapsible key={i} defaultOpen={true} className="m-4 p-4 space-y-2 border-2 rounded-xl">
-						<CollapsibleTrigger>
+						<CollapsibleTrigger className="w-full">
 							<div className="flex gap-2 font-bold place-items-center">
 								<ChevronsUpDown className="size-3"/>
 								<div>#{i+1} {r["video group"]}</div>
@@ -60,7 +60,7 @@ const QueryResult = ({result, type, setViewer, className}) => {
 			<div className={cn("", className)}>
 				{result.map((r, i) =>
 					<Collapsible key={i} defaultOpen={true} className="m-4 p-4 space-y-2 border-2 rounded-xl">
-						<CollapsibleTrigger>
+						<CollapsibleTrigger className="w-full">
 							<div className="flex gap-2 font-bold place-items-center">
 								<ChevronsUpDown className="size-3"/>
 								<div>{r.video}:</div>

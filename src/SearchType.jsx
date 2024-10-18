@@ -59,62 +59,80 @@ export const SearchArguments = {};
 SearchArguments[SearchType.SINGLE_SEARCH] = {
 	single: true,
 	blacklist: true,
-	args: {
-		K: 'number',
-		Translate: 'checkbox',
-	}
+	args: [
+		{ name: 'K', type: 'number' },
+		{ name: 'Translate', type: 'checkbox' }
+	]
 };
+
 SearchArguments[SearchType.FUSION_SEARCH] = {
 	multiple: true,
-	args: {
-		K: 'number',
-		Translate: 'checkbox',
-	}
+	args: [
+		{ name: 'K', type: 'number' },
+		{ name: 'Translate', type: 'checkbox' }
+	]
 };
+
 SearchArguments[SearchType.LOCAL_SEARCH] = {
 	single: true,
-	args: {
-		K: 'number',
-		Video: 'text',
-		Translate: 'checkbox',
-		// Fusion: 'checkbox'
-	}
+	args: [
+		{ name: 'K', type: 'number' },
+		{ name: 'Video', type: 'text' },
+		{ name: 'Translate', type: 'checkbox' }
+		// { name: 'Fusion', type: 'checkbox' }
+	]
 };
+
 SearchArguments[SearchType.GROUP_SEARCH] = {
 	single: true,
 	blacklist: true,
-	args: {
-		K: 'number',
-		Step: 'number',
-		Translate: 'checkbox',
-	}
+	args: [
+		{ name: 'K', type: 'number' },
+		{ name: 'Step', type: 'number' },
+		{ name: 'Sort', type: 'select', required: true, value: [
+			{ name: 'Length', value: 'length'},
+			{ name: 'Average', value: 'average'},
+			{ name: 'Max', value: 'max'},
+		]},
+		{ name: 'Translate', type: 'checkbox' },
+	]
 };
+
 SearchArguments[SearchType.HIERARCHY_SEARCH] = {
 	single: true,
-	args: {
-		K1: 'number',
-		K2: 'number',
-		Translate: 'checkbox',
-	}
+	args: [
+		{ name: 'K1', type: 'number' },
+		{ name: 'K2', type: 'number' },
+		{ name: 'Sort', type: 'select', required: true, value: [
+			{ name: 'Sum', value: 'sum'},
+			{ name: 'Average', value: 'average'},
+			{ name: 'Max', value: 'max'},
+		]},
+		{ name: 'Translate', type: 'checkbox' }
+	]
 };
+
 SearchArguments[SearchType.SUBTITLE_MATCH] = {
 	single: true,
-	args: {}
+	args: []
 };
+
 SearchArguments[SearchType.OCR_MATCH] = {
 	single: true,
-	args: {}
+	args: []
 };
+
 SearchArguments[SearchType.FRAME_RELATED_SEARCH] = {
-	args: {
-		K: 'number',
-		Video: 'text',
-		Frame: 'number',
-	}
+	args: [
+		{ name: 'K', type: 'number' },
+		{ name: 'Video', type: 'text' },
+		{ name: 'Frame', type: 'number' }
+	]
 };
+
 SearchArguments[SearchType.IMAGE_RELATED_SEARCH] = {
-	args: {
-		K: 'number',
-		Image: 'file'
-	}
+	args: [
+		{ name: 'K', type: 'number' },
+		{ name: 'Image', type: 'file' }
+	]
 };

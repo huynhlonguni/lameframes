@@ -187,7 +187,7 @@ const TabContent = ({content, updateContent, tab}) => {
 												<SelectLabel className="p-2">{searchOpts.name}</SelectLabel>
 												{
 													searchOpts.options.map((opts, i) => 
-														<SelectItem key={i} className="p-2 cursor-pointer hover:bg-slate-200 rounded-lg" value={opts}>
+														<SelectItem key={i} className="py-2 cursor-pointer hover:bg-slate-200 rounded-lg" value={opts}>
 															<SearchTypeRenderer type={opts}/>
 														</SelectItem>
 													)
@@ -200,9 +200,9 @@ const TabContent = ({content, updateContent, tab}) => {
 						</div>
 						<div className="grid grid-cols-2 shrink gap-2 empty:hidden">
 							{ searchMethod in SearchArguments && 
-								Object.entries(SearchArguments[searchMethod].args).map(([k, v], i) => 
+								SearchArguments[searchMethod].args.map((arg, i) => 
 									<div key={i} className="flex flex-col gap-2">
-										<ArgumentField label={k} type={v} value={content[k]} setValue={(newVal) => updateValue(k, newVal)}/>
+										<ArgumentField arg={arg} value={content[arg.name]} setValue={(newVal) => updateValue(arg.name, newVal)}/>
 									</div>
 								)
 							}
