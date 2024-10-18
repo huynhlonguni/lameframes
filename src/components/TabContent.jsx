@@ -29,7 +29,7 @@ import Thumbnail from "./Thumbnail";
 import TranslatedQueryRenderer from "./TranslatedQueryRenderer";
 
 const SearchOptions = [
-	{name: "Image Search", options: [
+	{name: "Query Search", options: [
 		SearchType.SINGLE_SEARCH,
 		SearchType.FUSION_SEARCH,
 		SearchType.LOCAL_SEARCH,
@@ -39,6 +39,10 @@ const SearchOptions = [
 	{name: "Text Search", options: [
 		SearchType.SUBTITLE_MATCH,
 		SearchType.OCR_MATCH,
+	]},
+	{name: "Image Search", options: [
+		// SearchType.IMAGE_RELATED_SEARCH,
+		// SearchType.FRAME_RELATED_SEARCH,
 	]}
 ]
 

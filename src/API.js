@@ -89,7 +89,7 @@ export const SubtitleIndexDrop = async (url) => {
 export const RelatedFrameSearch = async (url, video, frame, k) => {
 	return axios.post(`${url}/api/related-frame-search`, {
 		video: video,
-		frame: frame,
+		frame_id: frame,
 		k: k,
 	});
 }
@@ -129,9 +129,9 @@ export const SearchHelper = async (type, url, content) => {
 			case SearchType.OCR_MATCH:
 			return OCRMatch(url, query);
 		case SearchType.FRAME_RELATED_SEARCH:
-			return OCRMatch(url, video_name, frame, k);
+			return RelatedFrameSearch(url, video_name, frame, k);
 		case SearchType.IMAGE_RELATED_SEARCH:
-			return OCRMatch(url, query);
+			return RelatedImageSearch(url, null);
 		default:
 			return null;
 	}

@@ -59,7 +59,7 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 			})
 			setUserId(res.data.id);
 			setSessionId(res.data.sessionId);
-			getIds();
+			getIds(res.data.sessionId);
 		})
 		.catch((err) => {
 			toast.error(`Login failed: ${err.message}`, {
@@ -68,7 +68,7 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 		})
 	}
 
-	const getIds = () => {
+	const getIds = (sessionId) => {
 		if (!sessionId) {
 			toast.error("Log in first!", {
 				closeOnClick: true
@@ -182,7 +182,7 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 								</div>
 								<div className="flex flex-col gap-1">
 									<label className='font-bold px-1'>Password</label>
-									<Input type="text" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
+									<Input type="password" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
 											value={password} onChange={(e) => setPassword(e.target.value)}/>
 								</div>
 								<div className='grid grid-cols-2 gap-2'>
@@ -190,7 +190,7 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 										<KeyRound className='size-4'/>
 										<div className=''>Login</div>
 									</div>
-									<div onClick={getIds} className='cursor-pointer select-none flex gap-2 p-2 place-items-center justify-center w-full rounded-lg bg-green-600 hover:bg-green-500 border font-bold text-white'>
+									<div onClick={() => getIds(sessionId)} className='cursor-pointer select-none flex gap-2 p-2 place-items-center justify-center w-full rounded-lg bg-green-600 hover:bg-green-500 border font-bold text-white'>
 										<IdCard className='size-4'/>
 										<div className=''>Get IDs</div>
 									</div>
