@@ -26,7 +26,8 @@ let ytbPlayer = null;
 const VideoViewer = ({viewer, onClose, submit, onLocalSearch}) => {
 	const [currFrame, setCurrFrame] = useState(0);
 
-	const {qa, setQA} = useAppContext();
+
+	const [qa, setQA] = useState('');
 
 	const video = viewer[0];
 	const keyframe = viewer[1];
@@ -141,9 +142,9 @@ const VideoViewer = ({viewer, onClose, submit, onLocalSearch}) => {
 								)}
 							</div>
 							<div className="grid grid-rows-2 gap-2">
-								<input type="text" id="image_server" className='p-2 min-w-0 rounded-lg outline-none border-2'
+								<input type="number" id="image_server" className='p-2 min-w-0 rounded-lg outline-none border-2'
 									value={qa} onChange={(e) => setQA(e.target.value)}/>
-								<div onClick={(e) => submit(video, currentFrameMS)} className="p-4 w-full h-full text-white bg-cyan-600 hover:bg-cyan-700 cursor-pointer rounded-lg">
+								<div onClick={(e) => submit(video, currentFrameMS, qa)} className="p-4 w-full h-full text-white bg-cyan-600 hover:bg-cyan-700 cursor-pointer rounded-lg">
 									<div className="flex place-items-center gap-2 h-full">
 										<ArrowUpFromLine className="size-5"/>  
 										<div className="font-bold">Submit</div>

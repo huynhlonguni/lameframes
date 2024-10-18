@@ -8,7 +8,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select"
-import { Search } from "lucide-react";
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+import { Search, Ban, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import TextareaAutosize from 'react-textarea-autosize';
@@ -20,6 +25,7 @@ import VideoViewer from "./VideoViewer";
 import QueryResult from "./QueryResult";
 import ArgumentField from "./ArgumentField";
 import { SubmissionSubmitKIS, SubmissionSubmitQA } from "../SubmissionAPI";
+import Thumbnail from "./Thumbnail";
 
 const SearchOptions = [
 	{name: "Image Search", options: [
@@ -40,10 +46,11 @@ const TabContent = ({content, updateContent, tab}) => {
 
 	const [isSearching, setIsSearching] = useState(false);
 
-	const {qa, sessionId, evaluationId} = useAppContext();
+	const {sessionId, evaluationId} = useAppContext();
 
 	const searchMethod = content["SearchMethod"];
 	const queryResult = content["Result"];
+	const queryEmpty = Object.keys(queryResult).length === 0;
 
 	const [viewer, setViewer] = useState();
 
@@ -101,7 +108,7 @@ const TabContent = ({content, updateContent, tab}) => {
 		}
 	}
 
-	const submit = (video, frameMS) => {
+	const submit = (video, frameMS, qa) => {
 		if (!qa || qa == '') {
 			SubmissionSubmitKIS(sessionId, evaluationId, video, frameMS)
 			.then((res) => {
@@ -147,6 +154,52 @@ const TabContent = ({content, updateContent, tab}) => {
 		return;
 	}
 
+	const onLocalSearch = () => {
+		addNewTab({
+			SearchMethod: SearchType.LOCAL_SEARCH,
+			Query: content["Query"],
+			Video: viewer[0]
+		})
+		setViewer(null);
+	}
+
+	const removeFromBlacklist = (vid) => {
+		const bl = content["Blacklist"];
+
+		const index = bl.indexOf(vid);
+		if (index > -1) {
+			bl.splice(index, 1);
+		}
+		
+		updateValue("Blacklist", bl);
+	}
+
+	const addBlacklist = () => {
+		const bl = content["Blacklist"];
+
+		const resultMethod = content["ResultMethod"];
+
+		if (resultMethod == SearchType.SINGLE_SEARCH) {
+			queryResult.result.map((q, i) => {
+				const vid = q.video;
+				if (bl.indexOf(vid) === -1) {
+					bl.push(vid);
+				}
+			});
+		}
+		else if (resultMethod == SearchType.GROUP_SEARCH) {
+			queryResult.result.map((vg, i) => {
+				const vid = vg['video group'];
+				if (bl.indexOf(vid) === -1) {
+					bl.push(vid);
+				}
+			});
+		}
+		
+		updateValue("Blacklist", bl);
+		doSearch();
+	}
+
 	return(
 		<>
 		{
@@ -155,20 +208,12 @@ const TabContent = ({content, updateContent, tab}) => {
 				<VideoViewer viewer={viewer} setViewer={setViewer}
 							onClose={() => setViewer(null)}
 							submit={submit}
-							onLocalSearch={() => {
-									addNewTab({
-										SearchMethod: SearchType.LOCAL_SEARCH,
-										Query: content["Query"],
-										Video: viewer[0]
-									})
-									setViewer(null);
-								}
-							}
+							onLocalSearch={onLocalSearch}
 				/>,
 			document.body)
 		}
 			<div className="flex flex-col w-full grow overflow-hidden">
-				<div className={cn("w-full bg-slate-200 grid grid-cols-12 gap-4 p-4 z-20", queryResult?.length && "shadow-lg")}>
+				<div className={cn("w-full bg-slate-200 grid grid-cols-12 gap-4 p-4 z-20", !queryEmpty && "shadow-lg")}>
 					<div className="col-span-2 flex flex-col justify-start gap-2">
 						<div>
 							<Select value={content['SearchMethod']}
@@ -206,6 +251,15 @@ const TabContent = ({content, updateContent, tab}) => {
 									</div>
 								)
 							}
+							<div className="col-span-full pt-2">
+								{ searchMethod in SearchArguments &&  
+									SearchArguments[searchMethod].blacklist &&
+									<div onClick={addBlacklist} className={cn("flex w-full place-items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-red-600 hover:bg-red-500 text-white", queryEmpty && 'cursor-not-allowed bg-slate-400')}>
+										<Ban className="size-4" />
+										<div>Add To Blacklist & Search</div>
+									</div>
+								}
+							</div>
 						</div>
 					</div>
 					<div className="col-span-9">
@@ -216,6 +270,14 @@ const TabContent = ({content, updateContent, tab}) => {
 												onKeyDown={textAreaKeydown}
 												className="w-full p-2 resize-none rounded-lg outline-none" />
 						</div>
+						<div className="flex flex-col gap-1 pt-2">
+							<div className="font-bold">
+								Processed Query
+							</div>
+							<div>
+								{queryResult?.query}
+							</div>
+						</div>
 					</div>
 					<div className="col-span-1">
 						<div onClick={doSearch} className="flex cursor-pointer place-items-center justify-center gap-2 p-2 rounded-lg bg-green-700 hover:bg-green-600 text-white">
@@ -223,9 +285,29 @@ const TabContent = ({content, updateContent, tab}) => {
 							<div>Search</div>
 						</div>
 					</div>
-					
+					{
+						content["Blacklist"].length != 0 && 
+						<div className="col-span-full">
+							<Collapsible defaultOpen={false} className="">
+								<CollapsibleTrigger className="w-full">
+									<div className="flex gap-2 font-bold place-items-center">
+										<ChevronsUpDown className="size-3"/>
+										<div>Blacklist</div>
+									</div>
+								</CollapsibleTrigger>
+								<CollapsibleContent className="flex gap-1 flex-wrap p-1">
+								{
+									content["Blacklist"].map((vid) =>
+										<Thumbnail video={vid} onClick={() => setViewer([vid, 1])} onClose={() => {removeFromBlacklist(vid)}} className="bg-slate-300 max-w-max text-sm"/>
+									)
+								}
+								</CollapsibleContent>
+							</Collapsible>
+						</div>
+					}
 
 				</div>
+				
 				<div className="min-h-0 relative grow">
 					<div className="overflow-y-scroll h-full">
 						<div className="">

@@ -20,7 +20,8 @@ const defaultTab = {
 	Video: 'L01_V001',
 	Frame: 123,
 	Sort: 'max',
-	Result: [],
+	Blacklist: [],
+	Result: {},
 	ResultMethod: SearchType.NONE,
 }
 
