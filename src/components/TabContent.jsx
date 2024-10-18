@@ -26,6 +26,7 @@ import QueryResult from "./QueryResult";
 import ArgumentField from "./ArgumentField";
 import { SubmissionSubmitKIS, SubmissionSubmitQA } from "../SubmissionAPI";
 import Thumbnail from "./Thumbnail";
+import TranslatedQueryRenderer from "./TranslatedQueryRenderer";
 
 const SearchOptions = [
 	{name: "Image Search", options: [
@@ -270,14 +271,10 @@ const TabContent = ({content, updateContent, tab}) => {
 												onKeyDown={textAreaKeydown}
 												className="w-full p-2 resize-none rounded-lg outline-none" />
 						</div>
-						<div className="flex flex-col gap-1 pt-2">
-							<div className="font-bold">
-								Processed Query
-							</div>
-							<div>
-								{queryResult?.query}
-							</div>
-						</div>
+						{
+							!queryEmpty &&  
+							<TranslatedQueryRenderer type={content["ResultMethod"]} data={queryResult} />
+						}
 					</div>
 					<div className="col-span-1">
 						<div onClick={doSearch} className="flex cursor-pointer place-items-center justify-center gap-2 p-2 rounded-lg bg-green-700 hover:bg-green-600 text-white">
@@ -286,6 +283,8 @@ const TabContent = ({content, updateContent, tab}) => {
 						</div>
 					</div>
 					{
+						searchMethod in SearchArguments &&  
+						SearchArguments[searchMethod].blacklist && 
 						content["Blacklist"].length != 0 && 
 						<div className="col-span-full">
 							<Collapsible defaultOpen={false} className="">

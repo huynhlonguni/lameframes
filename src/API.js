@@ -126,6 +126,8 @@ export const SearchHelper = async (type, url, content) => {
 			return HierarchySearch(url, query, translate, k1, k2, use_with_fusion, fact_queries, sort);
 		case SearchType.SUBTITLE_MATCH:
 			return SubtitleMatch(url, query);
+			case SearchType.OCR_MATCH:
+			return OCRMatch(url, query);
 		case SearchType.FRAME_RELATED_SEARCH:
 			return OCRMatch(url, video_name, frame, k);
 		case SearchType.IMAGE_RELATED_SEARCH:
