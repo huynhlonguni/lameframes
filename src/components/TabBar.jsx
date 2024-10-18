@@ -1,5 +1,5 @@
 import Tab from './Tab'
-import { Plus, ChevronDown, X, Copy, KeyRound } from 'lucide-react';
+import { Plus, ChevronDown, X, Copy, KeyRound, UserRound } from 'lucide-react';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -9,18 +9,26 @@ import {
 import {
 	Select,
 	SelectContent,
-	SelectGroup,
 	SelectItem,
-	SelectLabel,
 	SelectTrigger,
 	SelectValue,
   } from "@/components/ui/select"
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog"
+  
 import { SearchTypeRenderer } from '../SearchType';
 import { useHorizontalScroll } from '../hooks/useHorizontalScroll';
 import { useAppContext } from '../Context';
 import { cn } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import { SubmissionGetEvaluationID, SubmissionLogin } from '../SubmissionAPI';
+import { useState } from 'react';
 
 const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 	const scrollRef = useHorizontalScroll();
@@ -29,6 +37,8 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 	const {searchServerPort, setSearchServerPort,imageServerPort, setImageServerPort} = useAppContext();
 	const {username, setUsername, password, setPassword} = useAppContext();
 	const {userId, setUserId, sessionId, setSessionId, evaluationId, setEvaluationId} = useAppContext();
+
+	const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
 
 	const login = () => {
 		if (!username) {
@@ -102,68 +112,80 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 					<ChevronDown className='size-6 m-4'/>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent className="min-w-48 m-2 bg-slate-200 rounded-lg p-4 flex flex-col gap-2 shadow-2xl">
-					<div className="flex flex-col gap-1">
+					<div className="flex w-min flex-col gap-1">
 						<label className='font-bold px-1'>Search Server</label>
-						<div className="flex justify-between gap-2 place-items-center rounded-lg bg-white">
+						<div className="flex w-min justify-between gap-2 place-items-center rounded-lg">
 							<Select value={searchServerProtocol}
 								onValueChange={(value) => {
 									setSearchServerProtocol(value);
 								}}>
-								<SelectTrigger className="w-[180px]">
+								<SelectTrigger className="w-20 rounded-lg">
 									<SelectValue />
 								</SelectTrigger>
-								<SelectContent>
+								<SelectContent className="w-20">
 									<SelectItem value="http">http</SelectItem>
 									<SelectItem value="https">https</SelectItem>
 								</SelectContent>
 							</Select>
 							<input type="text" id="search_server" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
 								value={searchServerHost} onChange={(e) => setSearchServerHost(e.target.value)}/>
-							<input type="text" id="search_server" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
+							<input type="text" id="search_server" className='min-w-0 max-w-14 py-2 pl-2 rounded-lg outline-none'
 								value={searchServerPort} onChange={(e) => setSearchServerPort(e.target.value)}/>
 							
 						</div>
 					</div>
 					<div className="flex flex-col gap-1">
 						<label className='font-bold px-1'>Image Server</label>
-						<div className="flex justify-between gap-2 place-items-center rounded-lg bg-white">
-							<Select value={imageServerProtocol}
+						<div className="flex justify-between gap-2 place-items-center rounded-lg">
+							<Select value={imageServerProtocol} className=" max-w-16"
 								onValueChange={(value) => {
 									setImageServerProtocol(value);
 								}}>
-								<SelectTrigger className="w-[180px]">
+								<SelectTrigger className="w-20 rounded-lg">
 									<SelectValue />
 								</SelectTrigger>
-								<SelectContent>
+								<SelectContent className="w-20">
 									<SelectItem value="http">http</SelectItem>
 									<SelectItem value="https">https</SelectItem>
 								</SelectContent>
 							</Select>
 							<input type="text" id="search_server" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
 								value={imageServerHost} onChange={(e) => setImageServerHost(e.target.value)}/>
-							<input type="text" id="search_server" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
+							<input type="text" id="search_server" className='min-w-0 max-w-14 py-2 pl-2 rounded-lg outline-none'
 								value={imageServerPort} onChange={(e) => setImageServerPort(e.target.value)}/>
 						</div>
 					</div>
 					<DropdownMenuSeparator className="bg-slate-300 h-[2px] mt-2 rounded-full w-5/6 mx-auto"/>
-					<div className="flex flex-col gap-1">
-						<label className='font-bold px-1'>Username</label>
-						<div className="flex justify-between place-items-center rounded-lg bg-white">
-							<input type="text" id="image_server" className='py-2 pl-2 rounded-lg outline-none'
-								value={username} onChange={(e) => setUsername(e.target.value)}/>
-						</div>
-					</div>
-					<div className="flex flex-col gap-1">
-						<label className='font-bold px-1'>Password</label>
-						<div className="flex justify-between place-items-center rounded-lg bg-white">
-							<input type="password" id="image_server" className='py-2 pl-2 rounded-lg outline-none'
-								value={password} onChange={(e) => setPassword(e.target.value)}/>
-						</div>
-					</div>
-					<div onClick={login} className='cursor-pointer select-none flex gap-2 p-2 place-items-center justify-center w-full rounded-lg bg-cyan-600 font-bold text-white'>
-						<KeyRound className='size-4'/>
-						<div className=''>Login</div>
-					</div>
+					<Dialog>
+						<DialogTrigger>
+							<div className='cursor-pointer select-none flex gap-2 p-2 place-items-center justify-center w-full rounded-lg bg-cyan-600 font-bold text-white'>
+								<UserRound className='size-4'/>
+								<div className=''>Account Management</div>
+							</div>
+						</DialogTrigger>
+						<DialogContent>
+							<div className="flex flex-col gap-1">
+								<label className='font-bold px-1'>Username</label>
+								<div className="flex w-max justify-between place-items-center rounded-lg bg-white">
+									<input type="text" id="image_server" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
+										value={username} onChange={(e) => setUsername(e.target.value)}/>
+								</div>
+							</div>
+							<div className="flex flex-col gap-1">
+								<label className='font-bold px-1'>Password</label>
+								<div className="flex w-max justify-between place-items-center rounded-lg bg-white">
+									<input type="password" id="image_server" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
+										value={password} onChange={(e) => setPassword(e.target.value)}/>
+								</div>
+							</div>
+							<div onClick={login} className='cursor-pointer select-none flex gap-2 p-2 place-items-center justify-center w-full rounded-lg bg-cyan-600 font-bold text-white'>
+								<KeyRound className='size-4'/>
+								<div className=''>Login</div>
+							</div>
+						</DialogContent>
+					</Dialog>
+
+					
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</div>
