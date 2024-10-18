@@ -34,7 +34,7 @@ function App() {
 
 	const [searchServerProtocol, setSearchServerProtocol] = useLocalStorage("search_server_protocol", "http");
 	const [imageServerProtocol, setImageServerProtocol] = useLocalStorage("image_server_protocol", "https");
-	const [searchServerHost, setSearchServerHost] = useLocalStorage("search_server_host", "localhost");
+	const [searchServerHost, setSearchServerHost] = useLocalStorage("search_server_host", "34.121.71.101");
 	const [imageServerHost, setImageServerHost] = useLocalStorage("image_server_host", "danjams.github.io");
 	const [searchServerPort, setSearchServerPort] = useLocalStorage("search_server_port", "5001");
 	const [imageServerPort, setImageServerPort] = useLocalStorage("image_server_port", "443");
