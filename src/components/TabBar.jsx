@@ -1,5 +1,5 @@
 import Tab from './Tab'
-import { Plus, ChevronDown, X, Copy, KeyRound, UserRound } from 'lucide-react';
+import { Plus, ChevronDown, X, Copy, KeyRound, UserRound, IdCard, Check } from 'lucide-react';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -16,11 +16,12 @@ import {
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
 	DialogTrigger,
+	DialogTitle,
 } from "@/components/ui/dialog"
+
+import { Input } from "@/components/ui/input"
+
   
 import { SearchTypeRenderer } from '../SearchType';
 import { useHorizontalScroll } from '../hooks/useHorizontalScroll';
@@ -28,7 +29,6 @@ import { useAppContext } from '../Context';
 import { cn } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import { SubmissionGetEvaluationID, SubmissionLogin } from '../SubmissionAPI';
-import { useState } from 'react';
 
 const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 	const scrollRef = useHorizontalScroll();
@@ -36,9 +36,7 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 	const {searchServerHost, setSearchServerHost, imageServerHost, setImageServerHost} = useAppContext();
 	const {searchServerPort, setSearchServerPort,imageServerPort, setImageServerPort} = useAppContext();
 	const {username, setUsername, password, setPassword} = useAppContext();
-	const {userId, setUserId, sessionId, setSessionId, evaluationId, setEvaluationId} = useAppContext();
-
-	const [settingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
+	const {setUserId, sessionId, setSessionId, evaluationId, setEvaluationId, evaluations, setEvaluations} = useAppContext();
 
 	const login = () => {
 		if (!username) {
@@ -61,22 +59,33 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 			})
 			setUserId(res.data.id);
 			setSessionId(res.data.sessionId);
-			SubmissionGetEvaluationID(res.data.sessionId)
-			.then((res2) => {
-				toast("Retrieved Evaluation ID", {
-					closeOnClick: true
-				})
-				setEvaluationId(res2.data[0].id);
-				console.log(res2.data)
-			})
-			.catch((err2) => {
-				toast.error(`Retrieving Evaluation ID failed: ${err2.message}`, {
-					closeOnClick: true
-				})
-			})
+			getIds();
 		})
 		.catch((err) => {
 			toast.error(`Login failed: ${err.message}`, {
+				closeOnClick: true
+			})
+		})
+	}
+
+	const getIds = () => {
+		if (!sessionId) {
+			toast.error("Log in first!", {
+				closeOnClick: true
+			});
+			return;
+		}
+
+		SubmissionGetEvaluationID(sessionId)
+		.then((res) => {
+			toast("Retrieved Evaluations", {
+				closeOnClick: true
+			})
+			setEvaluations(res.data);
+			console.log(res.data);
+		})
+		.catch((err) => {
+			toast.error(`Retrieving Evaluations failed: ${err.message}`, {
 				closeOnClick: true
 			})
 		})
@@ -127,9 +136,9 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 									<SelectItem value="https">https</SelectItem>
 								</SelectContent>
 							</Select>
-							<input type="text" id="search_server" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
+							<input type="text" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
 								value={searchServerHost} onChange={(e) => setSearchServerHost(e.target.value)}/>
-							<input type="text" id="search_server" className='min-w-0 max-w-14 py-2 pl-2 rounded-lg outline-none'
+							<input type="text" className='min-w-0 max-w-14 py-2 pl-2 rounded-lg outline-none'
 								value={searchServerPort} onChange={(e) => setSearchServerPort(e.target.value)}/>
 							
 						</div>
@@ -149,9 +158,9 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 									<SelectItem value="https">https</SelectItem>
 								</SelectContent>
 							</Select>
-							<input type="text" id="search_server" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
+							<input type="text" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
 								value={imageServerHost} onChange={(e) => setImageServerHost(e.target.value)}/>
-							<input type="text" id="search_server" className='min-w-0 max-w-14 py-2 pl-2 rounded-lg outline-none'
+							<input type="text" className='min-w-0 max-w-14 py-2 pl-2 rounded-lg outline-none'
 								value={imageServerPort} onChange={(e) => setImageServerPort(e.target.value)}/>
 						</div>
 					</div>
@@ -163,24 +172,78 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 								<div className=''>Account Management</div>
 							</div>
 						</DialogTrigger>
-						<DialogContent>
-							<div className="flex flex-col gap-1">
-								<label className='font-bold px-1'>Username</label>
-								<div className="flex w-max justify-between place-items-center rounded-lg bg-white">
-									<input type="text" id="image_server" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
-										value={username} onChange={(e) => setUsername(e.target.value)}/>
+						<DialogContent className="bg-slate-200 grid grid-cols-3 min-w-[75%]">
+							<DialogTitle className="hidden">Accounts</DialogTitle>
+							<div className='grid col-span-1 gap-4'>
+								<div className="flex flex-col gap-1">
+									<label className='font-bold px-1'>Username</label>
+									<Input type="text" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
+											value={username} onChange={(e) => setUsername(e.target.value)}/>
+								</div>
+								<div className="flex flex-col gap-1">
+									<label className='font-bold px-1'>Password</label>
+									<Input type="text" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
+											value={password} onChange={(e) => setPassword(e.target.value)}/>
+								</div>
+								<div className='grid grid-cols-2 gap-2'>
+									<div onClick={login} className='cursor-pointer select-none flex gap-2 p-2 place-items-center justify-center w-full rounded-lg bg-cyan-600 font-bold text-white'>
+										<KeyRound className='size-4'/>
+										<div className=''>Login</div>
+									</div>
+									<div onClick={getIds} className='cursor-pointer select-none flex gap-2 p-2 place-items-center justify-center w-full rounded-lg bg-green-600 border font-bold text-white'>
+										<IdCard className='size-4'/>
+										<div className=''>Get IDs</div>
+									</div>
 								</div>
 							</div>
-							<div className="flex flex-col gap-1">
-								<label className='font-bold px-1'>Password</label>
-								<div className="flex w-max justify-between place-items-center rounded-lg bg-white">
-									<input type="password" id="image_server" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
-										value={password} onChange={(e) => setPassword(e.target.value)}/>
-								</div>
-							</div>
-							<div onClick={login} className='cursor-pointer select-none flex gap-2 p-2 place-items-center justify-center w-full rounded-lg bg-cyan-600 font-bold text-white'>
-								<KeyRound className='size-4'/>
-								<div className=''>Login</div>
+							<div className='col-span-2 flex flex-wrap gap-8'>
+								{
+									evaluations.map((e, i) =>
+									<div key={i} className='flex flex-col gap-1'>
+										<div className='flex gap-2 text-lg'>
+											<div className='font-bold'>
+												{e.name}
+											</div>
+											<div className='font-semibold text-slate-600'>
+												{e.status}
+											</div>
+										</div>
+										<div className='flex gap-4'>
+											<div className='flex flex-col gap-4'>
+												<div className=''>
+													<div className="font-semibold">Description</div>
+													<div>{e.templateDescription}</div>
+												</div>
+												<div onClick={() => {setEvaluationId(e.id)}} className={cn('flex gap-2 place-items-center px-2 py-1 select-none cursor-pointer max-w-max bg-slate-500 rounded-md text-white', e.id == evaluationId && 'bg-green-600')}>
+													{e.id == evaluationId ? 
+													<>
+														<Check className='size-4'/>
+														<div>Selected</div>
+													</> : 'Select'
+													}
+												</div>
+												<div className={cn('-mt-10 flex gap-2 place-items-center px-2 py-1 select-none cursor-pointer max-w-max bg-slate-500 rounded-md text-white invisible')}>
+													<Check className='size-4'/>
+													<div>Selected</div>
+												</div>
+											</div>
+											<div className=''>
+												<div className="font-semibold">Tasks</div>
+												<div>
+													{
+														e.taskTemplates.map((t, i) =>
+															<div key={i} className='flex gap-1'>
+																<div className="font-bold">#{i + 1}</div>
+																<div className="">{t.taskGroup}</div>
+															</div>
+														)
+													}
+												</div>
+											</div>
+										</div>
+									</div>
+									)
+								}
 							</div>
 						</DialogContent>
 					</Dialog>

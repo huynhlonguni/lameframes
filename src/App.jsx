@@ -43,6 +43,7 @@ function App() {
 	const [password, setPassword] = useLocalStorage("password", "");
 	const [userId, setUserId] = useLocalStorage("user_id", "");
 	const [sessionId, setSessionId] = useLocalStorage("session_id", "");
+	const [evaluations, setEvaluations] = useLocalStorage("evaluations", []);
 	const [evaluationId, setEvaluationId] = useLocalStorage("evaluation_id", "");
 
 	const getNewTab = (overrides) => {
@@ -94,6 +95,7 @@ function App() {
 			addNewTab,
 			userId, setUserId,
 			sessionId, setSessionId,
+			evaluations, setEvaluations,
 			evaluationId, setEvaluationId,
 			qa, setQA
 		}}>
