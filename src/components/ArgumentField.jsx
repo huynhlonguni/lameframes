@@ -5,8 +5,9 @@ const ArgumentField = ({label, type, value, setValue}) => {
 		return(
 			<>
 				<div className="font-bold">{label}</div>
-				{/* <Switch /> */}
-				<input type={type} className="min-w-0 p-2 rounded-lg outline-none" checked={value} onChange={(e) => setValue(e.target.checked)} />
+				<div className="flex h-full place-items-center">
+					<Switch className="data-[state=checked]:bg-slate-500 data-[state=unchecked]:bg-slate-300" checked={value} onCheckedChange={(checked) => setValue(checked)} />
+				</div>
 			</>
 		)
 

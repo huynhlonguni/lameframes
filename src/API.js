@@ -84,6 +84,19 @@ export const SubtitleIndexDrop = async (url) => {
 	return axios.delete(`${url}/api/drop-index-es`);
 }
 
+export const RelatedFrameSearch = async (url, video, frame, k) => {
+	return axios.post(`${url}/api/related-frame-search`, {
+		video: video,
+		frame: frame,
+		k: k,
+	});
+}
+
+export const RelatedImageSearch = async (url, image) => {
+	return axios.post(`${url}/api/related-img-search`, {
+	});
+}
+
 export const SearchHelper = async (type, url, content) => {
 	const query = content["Query"];
 	const translate = content["Translate"];
@@ -92,6 +105,7 @@ export const SearchHelper = async (type, url, content) => {
 	const k2 = content["K2"];
 	const step = content["Step"];
 	const video_name = content["Video"];
+	const frame = content["Frame"];
 	const use_with_fusion = content["Fusion"];
 	const fact_queries = content["Queries"];
 
@@ -108,7 +122,9 @@ export const SearchHelper = async (type, url, content) => {
 			return HierarchySearch(url, query, translate, k1, k2, use_with_fusion, fact_queries);
 		case SearchType.SUBTITLE_MATCH:
 			return SubtitleMatch(url, query);
-		case SearchType.OCR_MATCH:
+		case SearchType.FRAME_RELATED_SEARCH:
+			return OCRMatch(url, video_name, frame, k);
+		case SearchType.IMAGE_RELATED_SEARCH:
 			return OCRMatch(url, query);
 		default:
 			return null;

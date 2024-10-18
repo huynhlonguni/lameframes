@@ -36,7 +36,7 @@ const SearchOptions = [
 ]
 
 const TabContent = ({content, updateContent, tab}) => {
-	const {searchServer, addNewTab} = useAppContext();
+	const {searchServerUrl, addNewTab} = useAppContext();
 
 	const [isSearching, setIsSearching] = useState(false);
 
@@ -78,7 +78,7 @@ const TabContent = ({content, updateContent, tab}) => {
 		}
 		setIsSearching(true);
 
-		SearchHelper(searchMethod, searchServer, content)
+		SearchHelper(searchMethod, searchServerUrl, content)
 		.then((res) => {
 			updateValue("Result", res.data);
 			updateValue("ResultMethod", searchMethod);
@@ -175,7 +175,7 @@ const TabContent = ({content, updateContent, tab}) => {
 								onValueChange={(value) => {
 									updateValue('SearchMethod', value);
 								}}>
-								<SelectTrigger className="w-full outline-none p-2 rounded-lg">
+								<SelectTrigger className="w-full p-2 rounded-lg">
 									<SelectValue placeholder={
 										<SearchTypeRenderer/>
 									}/>
@@ -210,7 +210,7 @@ const TabContent = ({content, updateContent, tab}) => {
 					</div>
 					<div className="col-span-9">
 						<div className="w-full">
-							<TextareaAutosize autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
+							<TextareaAutosize autoCorrect="off" autoCapitalize="off" spellCheck="false"
 												value={content["Query"]}
 												onChange={(e) => updateValue("Query", e.target.value)}
 												onKeyDown={textAreaKeydown}

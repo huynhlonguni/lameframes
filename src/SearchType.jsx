@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Search, View, Blend, Locate, Images, Layers, TextSearch, Regex } from "lucide-react";
+import { Search, View, Blend, Locate, Group, Layers, TextSearch, Regex, ScanSearch, Images } from "lucide-react";
 
 export const SearchType = Object.freeze({
 	NONE: 0,
@@ -10,6 +10,8 @@ export const SearchType = Object.freeze({
 	HIERARCHY_SEARCH: 5,
 	SUBTITLE_MATCH: 6,
 	OCR_MATCH: 7,
+	FRAME_RELATED_SEARCH: 8,
+	IMAGE_RELATED_SEARCH: 9,
 });
 
 export const SearchTypeName = (type) => {
@@ -22,6 +24,8 @@ export const SearchTypeName = (type) => {
 		case SearchType.HIERARCHY_SEARCH: return 'Hierarchy Search';
 		case SearchType.SUBTITLE_MATCH: return 'Subtitle Match';
 		case SearchType.OCR_MATCH: return 'OCR Match';
+		case SearchType.FRAME_RELATED_SEARCH: return 'Similar Frame Search';
+		case SearchType.IMAGE_RELATED_SEARCH: return 'Similar Image Search';
 	}
 }
 
@@ -31,10 +35,12 @@ export const SearchTypeIcon = ({type, className}) => {
 		case SearchType.SINGLE_SEARCH: return <View className={className}/>;
 		case SearchType.FUSION_SEARCH: return <Blend className={className}/>;
 		case SearchType.LOCAL_SEARCH: return <Locate className={className}/>;
-		case SearchType.GROUP_SEARCH: return <Images className={className}/>;
+		case SearchType.GROUP_SEARCH: return <Group className={className}/>;
 		case SearchType.HIERARCHY_SEARCH: return <Layers className={className}/>;
 		case SearchType.SUBTITLE_MATCH: return <TextSearch className={className}/>;
 		case SearchType.OCR_MATCH: return <Regex className={className}/>;
+		case SearchType.FRAME_RELATED_SEARCH: return <ScanSearch className={className}/>;
+		case SearchType.IMAGE_RELATED_SEARCH: return <Images className={className}/>;
 	}
 }
 
@@ -52,7 +58,6 @@ export const SearchTypeRenderer = ({type, className}) => {
 export const SearchArguments = {};
 SearchArguments[SearchType.SINGLE_SEARCH] = {
 	single: true,
-	multiple: false,
 	blacklist: true,
 	args: {
 		K: 'number',
@@ -60,9 +65,7 @@ SearchArguments[SearchType.SINGLE_SEARCH] = {
 	}
 };
 SearchArguments[SearchType.FUSION_SEARCH] = {
-	single: false,
 	multiple: true,
-	blacklist: false,
 	args: {
 		K: 'number',
 		Translate: 'checkbox',
@@ -70,8 +73,6 @@ SearchArguments[SearchType.FUSION_SEARCH] = {
 };
 SearchArguments[SearchType.LOCAL_SEARCH] = {
 	single: true,
-	multiple: false,
-	blacklist: false,
 	args: {
 		K: 'number',
 		Video: 'text',
@@ -81,7 +82,6 @@ SearchArguments[SearchType.LOCAL_SEARCH] = {
 };
 SearchArguments[SearchType.GROUP_SEARCH] = {
 	single: true,
-	multiple: false,
 	blacklist: true,
 	args: {
 		K: 'number',
@@ -91,8 +91,6 @@ SearchArguments[SearchType.GROUP_SEARCH] = {
 };
 SearchArguments[SearchType.HIERARCHY_SEARCH] = {
 	single: true,
-	multiple: false,
-	blacklist: false,
 	args: {
 		K1: 'number',
 		K2: 'number',
@@ -101,13 +99,22 @@ SearchArguments[SearchType.HIERARCHY_SEARCH] = {
 };
 SearchArguments[SearchType.SUBTITLE_MATCH] = {
 	single: true,
-	multiple: false,
-	blacklist: false,
 	args: {}
 };
 SearchArguments[SearchType.OCR_MATCH] = {
 	single: true,
-	multiple: false,
-	blacklist: false,
 	args: {}
+};
+SearchArguments[SearchType.FRAME_RELATED_SEARCH] = {
+	args: {
+		K: 'number',
+		Video: 'text',
+		Frame: 'number',
+	}
+};
+SearchArguments[SearchType.IMAGE_RELATED_SEARCH] = {
+	args: {
+		K: 'number',
+		Image: 'file'
+	}
 };

@@ -6,6 +6,15 @@ import {
 	DropdownMenuTrigger,
 	DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectLabel,
+	SelectTrigger,
+	SelectValue,
+  } from "@/components/ui/select"
 import { SearchTypeRenderer } from '../SearchType';
 import { useHorizontalScroll } from '../hooks/useHorizontalScroll';
 import { useAppContext } from '../Context';
@@ -15,7 +24,9 @@ import { SubmissionGetEvaluationID, SubmissionLogin } from '../SubmissionAPI';
 
 const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 	const scrollRef = useHorizontalScroll();
-	const {searchServer, setSearchServer, imageServer, setImageServer} = useAppContext();
+	const {searchServerProtocol, setSearchServerProtocol, imageServerProtocol, setImageServerProtocol} = useAppContext();
+	const {searchServerHost, setSearchServerHost, imageServerHost, setImageServerHost} = useAppContext();
+	const {searchServerPort, setSearchServerPort,imageServerPort, setImageServerPort} = useAppContext();
 	const {username, setUsername, password, setPassword} = useAppContext();
 	const {userId, setUserId, sessionId, setSessionId, evaluationId, setEvaluationId} = useAppContext();
 
@@ -93,17 +104,45 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 				<DropdownMenuContent className="min-w-48 m-2 bg-slate-200 rounded-lg p-4 flex flex-col gap-2 shadow-2xl">
 					<div className="flex flex-col gap-1">
 						<label className='font-bold px-1'>Search Server</label>
-						<div className="flex justify-between place-items-center rounded-lg bg-white">
-							<input type="text" id="search_server" className='py-2 pl-2 rounded-lg outline-none'
-								value={searchServer} onChange={(e) => setSearchServer(e.target.value)}/>
+						<div className="flex justify-between gap-2 place-items-center rounded-lg bg-white">
+							<Select value={searchServerProtocol}
+								onValueChange={(value) => {
+									setSearchServerProtocol(value);
+								}}>
+								<SelectTrigger className="w-[180px]">
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="http">http</SelectItem>
+									<SelectItem value="https">https</SelectItem>
+								</SelectContent>
+							</Select>
+							<input type="text" id="search_server" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
+								value={searchServerHost} onChange={(e) => setSearchServerHost(e.target.value)}/>
+							<input type="text" id="search_server" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
+								value={searchServerPort} onChange={(e) => setSearchServerPort(e.target.value)}/>
 							
 						</div>
 					</div>
 					<div className="flex flex-col gap-1">
 						<label className='font-bold px-1'>Image Server</label>
-						<div className="flex justify-between place-items-center rounded-lg bg-white">
-							<input type="text" id="image_server" className='py-2 pl-2 rounded-lg outline-none'
-								value={imageServer} onChange={(e) => setImageServer(e.target.value)}/>
+						<div className="flex justify-between gap-2 place-items-center rounded-lg bg-white">
+							<Select value={imageServerProtocol}
+								onValueChange={(value) => {
+									setImageServerProtocol(value);
+								}}>
+								<SelectTrigger className="w-[180px]">
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="http">http</SelectItem>
+									<SelectItem value="https">https</SelectItem>
+								</SelectContent>
+							</Select>
+							<input type="text" id="search_server" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
+								value={imageServerHost} onChange={(e) => setImageServerHost(e.target.value)}/>
+							<input type="text" id="search_server" className='min-w-0 py-2 pl-2 rounded-lg outline-none'
+								value={imageServerPort} onChange={(e) => setImageServerPort(e.target.value)}/>
 						</div>
 					</div>
 					<DropdownMenuSeparator className="bg-slate-300 h-[2px] mt-2 rounded-full w-5/6 mx-auto"/>
