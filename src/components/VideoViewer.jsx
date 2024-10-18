@@ -19,6 +19,7 @@ import {
 	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useAppContext } from "../Context";
+import { Input } from "@/components/ui/input";
   
 
 let ytbPlayer = null;
@@ -142,12 +143,17 @@ const VideoViewer = ({viewer, onClose, submit, onLocalSearch}) => {
 								)}
 							</div>
 							<div className="grid grid-rows-2 gap-2">
-								<input type="number" id="image_server" className='p-2 min-w-0 rounded-lg outline-none border-2'
-									value={qa} onChange={(e) => setQA(e.target.value)}/>
+								<div className="flex bg-slate-200 rounded-lg outline-none">
+									<div className="font-bold flex place-items-center px-4 select-none">
+										QA
+									</div>
+									<Input type="number" id="image_server" className='p-2 min-w-0 h-full rounded-l-lg border-[3px] outline-none'
+										value={qa} onChange={(e) => setQA(e.target.value)}/>
+								</div>
 								<div onClick={(e) => submit(video, currentFrameMS, qa)} className="p-4 w-full h-full text-white bg-cyan-600 hover:bg-cyan-700 cursor-pointer rounded-lg">
 									<div className="flex place-items-center gap-2 h-full">
 										<ArrowUpFromLine className="size-5"/>  
-										<div className="font-bold">Submit</div>
+										<div className="font-bold select-none">Submit</div>
 									</div>
 								</div>
 							</div>

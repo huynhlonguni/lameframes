@@ -6,6 +6,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select"
+import { Input } from "@/components/ui/input";
 
   
 const ArgumentField = ({arg, value, setValue}) => {
@@ -33,7 +34,7 @@ const ArgumentField = ({arg, value, setValue}) => {
 					<SelectTrigger className="outline-none">
 						<SelectValue/>
 					</SelectTrigger>
-					<SelectContent className="max-w-max">
+					<SelectContent className="max-w-max min-w-0">
 						{
 							arg.value.map((v, i) => 
 								<SelectItem key={i} value={v.value}>
@@ -50,7 +51,7 @@ const ArgumentField = ({arg, value, setValue}) => {
 	return(
 		<>
 			<div className="font-bold">{label}</div>
-			<input type={type} className="min-w-0 p-2 rounded-lg outline-none" value={value} onChange={(e) => setValue(e.target.value)} />
+			<Input type={type} className="min-w-0 p-2 rounded-lg outline-none" value={value} onChange={(e) => setValue(e.target.value)} />
 		</>
 	)
 };

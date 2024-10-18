@@ -13,7 +13,7 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from "@/components/ui/collapsible"
-import { Search, Ban, ChevronsUpDown } from "lucide-react";
+import { Search, Ban, ChevronsUpDown, CornerLeftUp } from "lucide-react";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import TextareaAutosize from 'react-textarea-autosize';
@@ -117,7 +117,6 @@ const TabContent = ({content, updateContent, tab}) => {
 		if (!qa || qa == '') {
 			SubmissionSubmitKIS(sessionId, evaluationId, video, frameMS)
 			.then((res) => {
-				console.log(err);
 				if (res.data.submission != "CORRECT") {
 					toast.error(`Submission wrong`, {
 						closeOnClick: true
@@ -129,17 +128,16 @@ const TabContent = ({content, updateContent, tab}) => {
 				})
 			})
 			.catch((err) => {
+				console.log(err);
 				toast.error(`Submit failed: ${err.response.data.description}`, {
 					closeOnClick: true
 				})
-				console.log(err);
 			})
 			return;
 		}
 
 		SubmissionSubmitQA(sessionId, evaluationId, qa, video, frameMS)
 		.then((res) => {
-			console.log(err);
 			if (res.data.submission != "CORRECT") {
 				toast.error(`Submission wrong`, {
 					closeOnClick: true
@@ -151,10 +149,10 @@ const TabContent = ({content, updateContent, tab}) => {
 			})
 		})
 		.catch((err) => {
+			console.log(err);
 			toast.error(`Submit failed: ${err.response.data.description}`, {
 				closeOnClick: true
 			})
-			console.log(err);
 		})
 		return;
 	}
@@ -230,7 +228,7 @@ const TabContent = ({content, updateContent, tab}) => {
 										<SearchTypeRenderer/>
 									}/>
 								</SelectTrigger>
-								<SelectContent className="w-full mt-1 p-2 rounded-lg shadow-lg">
+								<SelectContent className="w-full mt-1 rounded-lg shadow-lg max-h-max">
 									{
 										SearchOptions.map((searchOpts, i) => 
 											<SelectGroup key={i}>
@@ -268,22 +266,27 @@ const TabContent = ({content, updateContent, tab}) => {
 						</div>
 					</div>
 					<div className="col-span-9">
-						<div className="w-full">
+						<div className="w-full rounded-lg bg-white">
 							<TextareaAutosize autoCorrect="off" autoCapitalize="off" spellCheck="false"
 												value={content["Query"]}
 												onChange={(e) => updateValue("Query", e.target.value)}
 												onKeyDown={textAreaKeydown}
-												className="w-full p-2 resize-none rounded-lg outline-none" />
+												className="w-full p-2 rounded-lg resize-none outline-none" />
+							{
+								!queryEmpty && queryResult.query &&
+								<div className="flex gap-1 place-items-start p-2 text-slate-500 border-t border-slate-300">
+									<CornerLeftUp onClick={() => 
+										updateValue("Query", content["ResultMethod"] == SearchType.FUSION_SEARCH ? Object.keys(queryResult?.query)[0] : (content["ResultMethod"] == SearchType.GROUP_SEARCH ? (queryResult?.query)[0] : queryResult?.query))} className="size-6 min-w-6 min-h-6 p-1 rounded-lg cursor-pointer hover:bg-slate-200"/>
+									<TranslatedQueryRenderer className="" type={content["ResultMethod"]} data={queryResult} />
+								</div>
+							}
 						</div>
-						{
-							!queryEmpty &&  
-							<TranslatedQueryRenderer type={content["ResultMethod"]} data={queryResult} />
-						}
+						
 					</div>
 					<div className="col-span-1">
 						<div onClick={doSearch} className="flex cursor-pointer place-items-center justify-center gap-2 p-2 rounded-lg bg-green-700 hover:bg-green-600 text-white">
-							<Search className="h-4 w-4" />
-							<div>Search</div>
+							<Search className="size-4 min-w-4 min-h-4" />
+							<div className="hidden xl:block">Search</div>
 						</div>
 					</div>
 					{

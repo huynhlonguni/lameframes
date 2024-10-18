@@ -128,10 +128,10 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 								onValueChange={(value) => {
 									setSearchServerProtocol(value);
 								}}>
-								<SelectTrigger className="w-20 rounded-lg">
+								<SelectTrigger className="w-24 rounded-lg">
 									<SelectValue />
 								</SelectTrigger>
-								<SelectContent className="w-20">
+								<SelectContent className="w-24 min-w-0">
 									<SelectItem value="http">http</SelectItem>
 									<SelectItem value="https">https</SelectItem>
 								</SelectContent>
@@ -150,10 +150,10 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 								onValueChange={(value) => {
 									setImageServerProtocol(value);
 								}}>
-								<SelectTrigger className="w-20 rounded-lg">
+								<SelectTrigger className="w-24 rounded-lg">
 									<SelectValue />
 								</SelectTrigger>
-								<SelectContent className="w-20">
+								<SelectContent className="w-24 min-w-0">
 									<SelectItem value="http">http</SelectItem>
 									<SelectItem value="https">https</SelectItem>
 								</SelectContent>
