@@ -27,6 +27,7 @@ import ArgumentField from "./ArgumentField";
 import { SubmissionSubmitKIS, SubmissionSubmitQA } from "../SubmissionAPI";
 import Thumbnail from "./Thumbnail";
 import TranslatedQueryRenderer from "./TranslatedQueryRenderer";
+import ScrollToTop from "./ScrollToTop";
 
 const SearchOptions = [
 	{name: "Query Search", options: [
@@ -211,6 +212,13 @@ const TabContent = ({content, updateContent, tab}) => {
 		doSearch();
 	}
 
+	const switchTranslation = () => {
+		const translation = 
+			content["ResultMethod"] == SearchType.FUSION_SEARCH ? Object.keys(queryResult?.query)[0] : (content["ResultMethod"] == SearchType.GROUP_SEARCH ? (queryResult?.query)[0] : queryResult?.query);
+
+		updateValue("Query", translation);
+	}
+
 	return(
 		<>
 		{
@@ -224,7 +232,7 @@ const TabContent = ({content, updateContent, tab}) => {
 			document.body)
 		}
 			<div className="flex flex-col w-full grow overflow-hidden">
-				<div className={cn("group w-full bg-slate-200 grid grid-cols-12 gap-4 p-4 z-20", !queryEmpty && "shadow-lg")}>
+				<div className={cn("group/search w-full bg-slate-200 grid grid-cols-12 gap-4 p-4 z-20", !queryEmpty && "shadow-lg")}>
 					<div className="col-span-2 flex flex-col justify-start gap-2">
 						<div>
 							<Select value={content['SearchMethod']}
@@ -254,7 +262,9 @@ const TabContent = ({content, updateContent, tab}) => {
 								</SelectContent>
 							</Select>
 						</div>
-						<div className="flex flex-wrap justify-between gap-2 empty:hidden">
+						<div className={cn("flex-wrap justify-between gap-2 empty:hidden flex",
+							!queryEmpty && "hidden group-hover/search:flex group-focus/search:flex"
+						)}>
 							{ searchMethod in SearchArguments && 
 								SearchArguments[searchMethod].args.map((arg, i) => 
 									<div key={i} className="flex flex-col gap-2 justify-center">
@@ -273,9 +283,9 @@ const TabContent = ({content, updateContent, tab}) => {
 												className="w-full p-2 rounded-lg resize-none outline-none" />
 							{
 								!queryEmpty && queryResult.query &&
-								<div className="flex gap-1 place-items-start p-2 text-slate-500 border-t border-slate-300">
-									<CornerLeftUp onClick={() => 
-										updateValue("Query", content["ResultMethod"] == SearchType.FUSION_SEARCH ? Object.keys(queryResult?.query)[0] : (content["ResultMethod"] == SearchType.GROUP_SEARCH ? (queryResult?.query)[0] : queryResult?.query))} className="size-6 min-w-6 min-h-6 p-1 rounded-lg cursor-pointer hover:bg-slate-200"/>
+								<div className={cn("flex gap-1 place-items-start p-2 text-slate-500 border-t border-slate-300",
+													!queryEmpty && "hidden group-hover/search:flex group-focus/search:flex group-hover/select:flex")}>
+									<CornerLeftUp onClick={switchTranslation} className="size-6 min-w-6 min-h-6 p-1 rounded-lg cursor-pointer hover:bg-slate-200"/>
 									<TranslatedQueryRenderer className="" type={content["ResultMethod"]} data={queryResult} />
 								</div>
 							}
@@ -288,7 +298,10 @@ const TabContent = ({content, updateContent, tab}) => {
 							<div className="hidden xl:block">Search</div>
 						</div>
 						{ searchMethod in SearchArguments && SearchArguments[searchMethod].blacklist &&
-							<div onClick={addBlacklist} className={cn("flex w-full place-items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-red-600 hover:bg-red-500 text-white", queryEmpty && 'cursor-not-allowed bg-slate-400')}>
+							<div onClick={addBlacklist}
+								className={cn("flex w-full place-items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-red-600 hover:bg-red-500 text-white",
+												queryEmpty && 'cursor-not-allowed bg-slate-400',
+												!queryEmpty && "hidden group-hover/search:flex group-focus/search:flex")}>
 								<Ban className="size-4 min-w-4 min-h-4" />
 								<div className="hidden xl:block">Blacklist</div>
 							</div>
@@ -298,7 +311,7 @@ const TabContent = ({content, updateContent, tab}) => {
 						searchMethod in SearchArguments &&  
 						SearchArguments[searchMethod].blacklist && 
 						content["Blacklist"].length != 0 && 
-						<div className="col-span-full">
+						<div className={cn("col-span-full", !queryEmpty && "hidden group-hover/search:block group-focus/search:block")}>
 							<Collapsible defaultOpen={false} className="">
 								<CollapsibleTrigger className="w-full">
 									<div className="flex gap-2 font-bold place-items-center">
@@ -320,11 +333,9 @@ const TabContent = ({content, updateContent, tab}) => {
 				</div>
 				
 				<div className="min-h-0 relative grow">
-					<div className="overflow-y-scroll h-full">
-						<div className="">
-							<QueryResult result={queryResult} type={content["ResultMethod"]} setViewer={setViewer}/>
-						</div>
-					</div>
+					<ScrollToTop className="overflow-y-scroll h-full">
+						<QueryResult result={queryResult} type={content["ResultMethod"]} setViewer={setViewer}/>
+					</ScrollToTop>
 					{isSearching &&
 						<div className="absolute top-0 bg-black w-full h-full backdrop-blur-sm bg-opacity-30 flex place-items-center justify-center ">
 							<div className="select-none font-bold text-2xl text-white">

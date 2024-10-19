@@ -32,10 +32,10 @@ const ArgumentField = ({arg, value, setValue}) => {
 						onValueChange={(value) => {
 							setValue(value);
 						}} required={arg.required}>
-					<SelectTrigger className="outline-none min-w-0">
-						<SelectValue/>
+					<SelectTrigger className="outline-none min-w-0 max-w-20">
+						<SelectValue className="outline-none min-w-0 max-w-20"/>
 					</SelectTrigger>
-					<SelectContent className="max-w-max min-w-0">
+					<SelectContent className="group/select max-w-max min-w-0">
 						{
 							arg.value.map((v, i) => 
 								<SelectItem key={i} value={v.value}>
