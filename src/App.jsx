@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import useLocalStorage from 'use-local-storage';
 import TabContent from './components/TabContent';
 import TabBar from './components/TabBar'
@@ -10,8 +10,9 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const defaultTab = {
 	SearchMethod: SearchType.SINGLE_SEARCH,
-	Query: '',
 	Queries: [''],
+	QueriesTranslated: [''],
+	Weights: [1],
 	Translate: true,
 	K: 30,
 	K1: 15,
@@ -35,7 +36,7 @@ function App() {
 
 	const [searchServerProtocol, setSearchServerProtocol] = useLocalStorage("search_server_protocol", "http");
 	const [imageServerProtocol, setImageServerProtocol] = useLocalStorage("image_server_protocol", "https");
-	const [searchServerHost, setSearchServerHost] = useLocalStorage("search_server_host", "34.121.71.101");
+	const [searchServerHost, setSearchServerHost] = useLocalStorage("search_server_host", "34.29.129.102");
 	const [imageServerHost, setImageServerHost] = useLocalStorage("image_server_host", "danjams.github.io");
 	const [searchServerPort, setSearchServerPort] = useLocalStorage("search_server_port", "5001");
 	const [imageServerPort, setImageServerPort] = useLocalStorage("image_server_port", "443");

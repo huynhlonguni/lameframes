@@ -13,12 +13,12 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from "@/components/ui/collapsible"
-import { Search, Ban, ChevronsUpDown, ArrowUpDown } from "lucide-react";
+import { Search, Ban, ChevronsUpDown, ArrowUpDown, Trash, X, Plus } from "lucide-react";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import TextareaAutosize from 'react-textarea-autosize';
 import { SearchType, SearchTypeRenderer, SearchArguments } from "../SearchType";
-import { SearchHelper } from "../API";
+import { SearchHelper, SearchResultHelper } from "../API";
 import { cn } from "@/lib/utils";
 import { toast } from "react-toastify";
 import VideoViewer from "./VideoViewer";
@@ -28,6 +28,7 @@ import { SubmissionSubmitKIS, SubmissionSubmitQA } from "../SubmissionAPI";
 import TranslatedQueryRenderer from "./TranslatedQueryRenderer";
 import ScrollToTop from "./ScrollToTop";
 import BlacklistStub from "./BlacklistStub";
+import { Input } from "@/components/ui/input";
 
 const SearchOptions = [
 	{name: "Query Search", options: [
@@ -54,6 +55,7 @@ const TabContent = ({content, updateContent, tab}) => {
 
 	const {sessionId, evaluationId} = useAppContext();
 
+	const queries = content["Queries"];
 	const searchMethod = content["SearchMethod"];
 	const queryResult = content["Result"];
 	const queryEmpty = Object.keys(queryResult).length === 0;
@@ -101,10 +103,22 @@ const TabContent = ({content, updateContent, tab}) => {
 
 		SearchHelper(searchMethod, searchServerUrl, content)
 		.then((res) => {
-			updateValue("Result", res.data);
+			res = SearchResultHelper(searchMethod, res.data);
+			updateValue("Result", res);
 			updateValue("ResultMethod", searchMethod);
+
+			if (searchMethod == SearchType.FUSION_SEARCH) {
+				const qT = [];
+				queries.map((q) => {
+					qT.push(res.query[q]);
+				})
+				console.log(qT);
+				updateValue("QueriesTranslated", qT);
+			}
+			else 
+				updateValue("QueriesTranslated", res.query);
+
 			setIsSearching(false);
-			console.log(res);
 		})
 		.catch((e) => {
 			console.error("Failed to search:", e);
@@ -176,7 +190,7 @@ const TabContent = ({content, updateContent, tab}) => {
 	const onLocalSearch = () => {
 		addNewTab({
 			SearchMethod: SearchType.LOCAL_SEARCH,
-			Query: content["Query"],
+			Queries: [content["Queries"][0]],
 			Video: viewer[0]
 		})
 		setViewer(null);
@@ -219,34 +233,43 @@ const TabContent = ({content, updateContent, tab}) => {
 		doSearch();
 	}
 
-	const switchTranslation = () => {
-		const currQuery = content["Query"];
-		const resMethod = content["ResultMethod"];
-		if (resMethod == SearchType.FUSION_SEARCH) {
-			updateValue("Query", Object.keys(queryResult.query)[0]);
+	const switchTranslation = (i) => {
+		const q = structuredClone(content["Queries"]);
+		const qT = structuredClone(content["QueriesTranslated"]);
+		q[i] = content["QueriesTranslated"][i];
+		qT[i] = content["Queries"][i];
+		updateValue("Queries", q);
+		updateValue("QueriesTranslated", qT);
+	}
 
-			const dup = structuredClone(queryResult);
-			dup.query = {};
-			dup.query[currQuery] = 1;
+	const changeQueries = (i, v) => {
+		const q = structuredClone(queries);
+		q[i] = v;
+		updateValue("Queries", q);
+	}
 
-			updateValue("Result", dup);
-		}
-		else if (resMethod == SearchType.GROUP_SEARCH) {
-			updateValue("Query", queryResult.query[0]);
+	const deleteQueries = (i) => {
+		const q = structuredClone(queries);
+		q.splice(i, 1);
+		updateValue("Queries", q);
 
-			const dup = structuredClone(queryResult);
-			dup.query[0] = currQuery;
+		const qT = structuredClone(content["QueriesTranslated"]);
+		qT.splice(i, 1);
+		updateValue("QueriesTranslated", qT);
 
-			updateValue("Result", dup);
-		}
-		else {
-			updateValue("Query", queryResult.query);
+		const w = structuredClone(content["Weights"]);
+		w.splice(i, 1);
+		updateValue("Weights", w);
+	}
 
-			const dup = structuredClone(queryResult);
-			dup.query = currQuery;
+	const addNewQueries = () => {
+		const q = structuredClone(queries);
+		q.push('');
+		updateValue("Queries", q);
 
-			updateValue("Result", dup);
-		}
+		const w = structuredClone(content["Weights"]);
+		w.push(1);
+		updateValue("Weights", w);
 	}
 
 	return(
@@ -258,9 +281,8 @@ const TabContent = ({content, updateContent, tab}) => {
 							onClose={() => setViewer(null)}
 							submit={submit}
 							onLocalSearch={onLocalSearch}
-				/>,
-			document.body)
-		}
+				/>, document.body)
+			}
 			<div className="flex flex-col w-full grow overflow-hidden">
 				<div className={cn("group/search w-full bg-slate-200 grid grid-cols-12 gap-4 p-4 z-20", !queryEmpty && "shadow-lg")}>
 					<div className="col-span-2 flex flex-col justify-start gap-2">
@@ -304,23 +326,55 @@ const TabContent = ({content, updateContent, tab}) => {
 							}
 						</div>
 					</div>
-					<div className="col-span-9">
-						<div className="w-full rounded-lg bg-white">
-							<TextareaAutosize autoCorrect="off" autoCapitalize="off" spellCheck="false"
-												value={content["Query"]}
-												onChange={(e) => updateValue("Query", e.target.value)}
-												onKeyDown={textAreaKeydown}
-												className="w-full p-2 rounded-lg resize-none outline-none" />
-							{
-								!queryEmpty && queryResult.query &&
-								<div className={cn("flex gap-1 place-items-start p-2 text-slate-500 border-t border-slate-300",
-													!queryEmpty && "hidden group-hover/search:flex group-focus/search:flex group-hover/select:flex")}>
-									<ArrowUpDown onClick={switchTranslation} className="size-6 min-w-6 min-h-6 p-1 rounded-lg cursor-pointer hover:bg-slate-200"/>
-									<TranslatedQueryRenderer className="" type={content["ResultMethod"]} data={queryResult} />
+					<div className="col-span-9 space-y-2">
+						{searchMethod in SearchArguments &&
+							queries
+							.filter((q, i) => SearchArguments[searchMethod].query == 'multiple' || i == 0)
+							.map((q, i) => 
+								<div key={i} className="flex gap-2 place-items-start">
+									<div className="w-full rounded-lg bg-white place-items-center">
+										<TextareaAutosize autoCorrect="off" autoCapitalize="off" spellCheck="false"
+													value={q}
+													onChange={(e) => {
+														changeQueries(i, e.target.value);
+													}}
+													onKeyDown={textAreaKeydown}
+													className="w-full p-2 rounded-lg resize-none outline-none" />
+										{
+											!queryEmpty && content["QueriesTranslated"][i] &&
+											<div className={cn("flex gap-1 place-items-start p-2 text-slate-500 border-t border-slate-300",
+																!queryEmpty &&  "hidden group-hover/search:flex group-focus/search:flex group-hover/select:flex")}>
+												<ArrowUpDown onClick={() => switchTranslation(i)} className="size-6 min-w-6 min-h-6 p-1 rounded-lg cursor-pointer hover:bg-slate-200"/>
+												<div>{content["QueriesTranslated"][i]}</div>
+												{/* <TranslatedQueryRenderer className="" type={content["ResultMethod"]} data={queryResult} /> */}
+											</div>
+										}
+									</div>
+									{
+										SearchArguments[searchMethod].weight &&
+										<Input type="number" className="outline-none max-w-20" value={content["Weights"][i]} onChange={(e) => {
+											const w = structuredClone(content["Weights"]);
+											w[i] = e.target.value;
+											updateValue("Weights", w);
+										} }/>
+									}
+									{
+										SearchArguments[searchMethod].query == 'multiple' &&
+										<div onClick={() => deleteQueries(i)} className="cursor-pointer p-2 bg-white rounded-lg">
+											<X className="text-slate-400 hover:text-slate-500" />
+										</div>
+									}
 								</div>
-							}
-						</div>
-						
+							)
+						}
+						{
+							SearchArguments[searchMethod].query == 'multiple' &&
+							<div className="w-full flex place-items-center justify-center">
+								<div onClick={addNewQueries} className="bg-white rounded-lg p-2 cursor-pointer">
+									<Plus className="size-4 text-slate-400 hover:text-slate-500" />
+								</div>
+							</div>
+						}
 					</div>
 					<div className="col-span-1 space-y-2">
 						<div onClick={doSearch} className="flex cursor-pointer place-items-center justify-center gap-2 p-2 rounded-lg bg-green-700 hover:bg-green-600 text-white">

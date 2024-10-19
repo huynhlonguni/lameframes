@@ -57,7 +57,7 @@ export const SearchTypeRenderer = ({type, className}) => {
 
 export const SearchArguments = {};
 SearchArguments[SearchType.SINGLE_SEARCH] = {
-	single: true,
+	query: 'one',
 	blacklist: true,
 	args: [
 		{ name: 'K', type: 'number' },
@@ -66,7 +66,8 @@ SearchArguments[SearchType.SINGLE_SEARCH] = {
 };
 
 SearchArguments[SearchType.FUSION_SEARCH] = {
-	multiple: true,
+	query: 'multiple',
+	weight: true,
 	args: [
 		{ name: 'K', type: 'number' },
 		{ name: 'Translate', type: 'checkbox' }
@@ -74,7 +75,7 @@ SearchArguments[SearchType.FUSION_SEARCH] = {
 };
 
 SearchArguments[SearchType.LOCAL_SEARCH] = {
-	single: true,
+	query: 'one',
 	args: [
 		{ name: 'K', type: 'number' },
 		{ name: 'Video', type: 'text' },
@@ -84,7 +85,7 @@ SearchArguments[SearchType.LOCAL_SEARCH] = {
 };
 
 SearchArguments[SearchType.GROUP_SEARCH] = {
-	single: true,
+	query: 'multiple',
 	blacklist: true,
 	args: [
 		{ name: 'K', type: 'number' },
@@ -99,7 +100,7 @@ SearchArguments[SearchType.GROUP_SEARCH] = {
 };
 
 SearchArguments[SearchType.HIERARCHY_SEARCH] = {
-	single: true,
+	query: 'one',
 	args: [
 		{ name: 'K1', type: 'number' },
 		{ name: 'K2', type: 'number' },
@@ -113,20 +114,21 @@ SearchArguments[SearchType.HIERARCHY_SEARCH] = {
 };
 
 SearchArguments[SearchType.SUBTITLE_MATCH] = {
-	single: true,
+	query: 'one',
 	args: [
 		{ name: 'Limit', type: 'number' },
 	]
 };
 
 SearchArguments[SearchType.OCR_MATCH] = {
-	single: true,
+	query: 'one',
 	args: [
 		{ name: 'Limit', type: 'number' },
 	]
 };
 
 SearchArguments[SearchType.FRAME_RELATED_SEARCH] = {
+	query: 'none',
 	args: [
 		{ name: 'K', type: 'number' },
 		{ name: 'Video', type: 'text' },
@@ -135,6 +137,7 @@ SearchArguments[SearchType.FRAME_RELATED_SEARCH] = {
 };
 
 SearchArguments[SearchType.IMAGE_RELATED_SEARCH] = {
+	query: 'file',
 	args: [
 		{ name: 'K', type: 'number' },
 		{ name: 'Image', type: 'file' }
