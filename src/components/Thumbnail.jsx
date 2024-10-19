@@ -11,7 +11,7 @@ const colors = [
 	"bg-rose-200",
 ]
 
-const Thumbnail = ({video, keyframe, onClick, className, onClose, colorId = -1}) => {
+const Thumbnail = ({video, keyframe, onClick, className, colorId = -1, hideText = false, children}) => {
 	const {imageServerUrl} = useAppContext();
 
 	const video2 = video.replace("_", "/");
@@ -27,15 +27,14 @@ const Thumbnail = ({video, keyframe, onClick, className, onClose, colorId = -1})
 			{validUrl && 
 				<img src={url} className={cn("w-full rounded-md", false && "h-full max-h-32 max-w-56")}/>
 			}
-			<div className="flex justify-between">
-				<div>{video}</div>
-				<div>{keyframe}</div>
-				{onClose &&
-					<div onClick={(e) => {e.stopPropagation(); onClose();}} className="flex place-items-center ml-1 cursor-pointer hover:bg-slate-400 rounded-lg">
-						<X className="size-4 m-1"/>
-					</div>
-				}
-			</div>
+			{
+				!hideText &&
+				<div className="flex justify-center">
+					{
+						children ? children : <div>{keyframe}</div>
+					}
+				</div>
+			}
 		</div>	
 	)
 }

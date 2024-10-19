@@ -13,7 +13,7 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from "@/components/ui/collapsible"
-import { Search, Ban, ChevronsUpDown, CornerLeftUp } from "lucide-react";
+import { Search, Ban, ChevronsUpDown, ArrowUpDown } from "lucide-react";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import TextareaAutosize from 'react-textarea-autosize';
@@ -25,9 +25,9 @@ import VideoViewer from "./VideoViewer";
 import QueryResult from "./QueryResult";
 import ArgumentField from "./ArgumentField";
 import { SubmissionSubmitKIS, SubmissionSubmitQA } from "../SubmissionAPI";
-import Thumbnail from "./Thumbnail";
 import TranslatedQueryRenderer from "./TranslatedQueryRenderer";
 import ScrollToTop from "./ScrollToTop";
+import BlacklistStub from "./BlacklistStub";
 
 const SearchOptions = [
 	{name: "Query Search", options: [
@@ -213,10 +213,33 @@ const TabContent = ({content, updateContent, tab}) => {
 	}
 
 	const switchTranslation = () => {
-		const translation = 
-			content["ResultMethod"] == SearchType.FUSION_SEARCH ? Object.keys(queryResult?.query)[0] : (content["ResultMethod"] == SearchType.GROUP_SEARCH ? (queryResult?.query)[0] : queryResult?.query);
+		const currQuery = content["Query"];
+		const resMethod = content["ResultMethod"];
+		if (resMethod == SearchType.FUSION_SEARCH) {
+			updateValue("Query", Object.keys(queryResult.query)[0]);
 
-		updateValue("Query", translation);
+			const dup = structuredClone(queryResult);
+			dup.query = {};
+			dup.query[currQuery] = 1;
+
+			updateValue("Result", dup);
+		}
+		else if (resMethod == SearchType.GROUP_SEARCH) {
+			updateValue("Query", queryResult.query[0]);
+
+			const dup = structuredClone(queryResult);
+			dup.query[0] = currQuery;
+
+			updateValue("Result", dup);
+		}
+		else {
+			updateValue("Query", queryResult.query);
+
+			const dup = structuredClone(queryResult);
+			dup.query = currQuery;
+
+			updateValue("Result", dup);
+		}
 	}
 
 	return(
@@ -285,7 +308,7 @@ const TabContent = ({content, updateContent, tab}) => {
 								!queryEmpty && queryResult.query &&
 								<div className={cn("flex gap-1 place-items-start p-2 text-slate-500 border-t border-slate-300",
 													!queryEmpty && "hidden group-hover/search:flex group-focus/search:flex group-hover/select:flex")}>
-									<CornerLeftUp onClick={switchTranslation} className="size-6 min-w-6 min-h-6 p-1 rounded-lg cursor-pointer hover:bg-slate-200"/>
+									<ArrowUpDown onClick={switchTranslation} className="size-6 min-w-6 min-h-6 p-1 rounded-lg cursor-pointer hover:bg-slate-200"/>
 									<TranslatedQueryRenderer className="" type={content["ResultMethod"]} data={queryResult} />
 								</div>
 							}
@@ -322,7 +345,7 @@ const TabContent = ({content, updateContent, tab}) => {
 								<CollapsibleContent className="flex gap-1 flex-wrap p-1">
 								{
 									content["Blacklist"].map((vid) =>
-										<Thumbnail video={vid} onClick={() => setViewer([vid, 1])} onClose={() => {removeFromBlacklist(vid)}} className="bg-slate-300 max-w-max text-sm"/>
+										<BlacklistStub video={vid} onClick={() => setViewer([vid, 1])} onClose={() => {removeFromBlacklist(vid)}} className="bg-slate-300 max-w-max text-sm"/>
 									)
 								}
 								</CollapsibleContent>
