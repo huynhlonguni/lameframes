@@ -29,10 +29,14 @@ const Thumbnail = ({video, keyframe, onClick, className, colorId = -1, hideText 
 			}
 			{
 				!hideText &&
-				<div className="flex justify-center">
-					{
-						children ? children : <div>{keyframe}</div>
-					}
+				<div className="flex justify-between">
+					<div>{video}</div>
+					<div>{keyframe}</div>
+				</div>
+			}
+			{
+				<div className="">
+					{children}
 				</div>
 			}
 		</div>	

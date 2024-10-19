@@ -14,7 +14,7 @@ const QueryResult = ({result, type, setViewer, className}) => {
 		return(
 			<div className={cn("grid grid-cols-6 gap-1 p-2", className)}>
 				{result.result.map((r, i) => 
-					<Thumbnail key={i} video={r.video} keyframe={r.frameid} hideText={true} onClick={() => setViewer([r.video, r.frameid])}/>
+					<Thumbnail key={i} video={r.video} keyframe={r.frameid} onClick={() => setViewer([r.video, r.frameid])}/>
 				)}
 			</div>
 		)
@@ -37,7 +37,7 @@ const QueryResult = ({result, type, setViewer, className}) => {
 			<div className={cn("grid grid-cols-6 gap-1 p-2", className)}>
 				{result.result.map((r, i) => 
 					r.results.map((r2, i2) => 
-						<Thumbnail key={i2} video={r2.video} keyframe={r2.frameid} colorId={i} hideText={true}
+						<Thumbnail key={i2} video={r2.video} keyframe={r2.frameid} colorId={i}
 									onClick={() => setViewer([r2.video, r2.frameid])}/>
 					)
 				)}
@@ -59,7 +59,7 @@ const QueryResult = ({result, type, setViewer, className}) => {
 						</CollapsibleTrigger>
 						<CollapsibleContent className="grid grid-cols-6 gap-2 min-w-0">
 							{r.frameid.map((f, i2) => 
-								<Thumbnail key={i2} video={r.video} keyframe={f} hideText={true}
+								<Thumbnail key={i2} video={r.video} keyframe={f}
 											onClick={() => setViewer([r.video, f])}/>
 							)}
 						</CollapsibleContent>

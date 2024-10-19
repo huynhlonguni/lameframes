@@ -341,7 +341,7 @@ const TabContent = ({content, updateContent, tab}) => {
 													onKeyDown={textAreaKeydown}
 													className="w-full p-2 rounded-lg resize-none outline-none" />
 										{
-											!queryEmpty && content["QueriesTranslated"][i] &&
+											!queryEmpty && content["QueriesTranslated"] && content["QueriesTranslated"][i] &&
 											<div className={cn("flex gap-1 place-items-start p-2 text-slate-500 border-t border-slate-300",
 																!queryEmpty &&  "hidden group-hover/search:flex group-focus/search:flex group-hover/select:flex")}>
 												<ArrowUpDown onClick={() => switchTranslation(i)} className="size-6 min-w-6 min-h-6 p-1 rounded-lg cursor-pointer hover:bg-slate-200"/>
