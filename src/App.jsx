@@ -25,6 +25,9 @@ const defaultTab = {
 	Blacklist: [],
 	Result: {},
 	ResultMethod: SearchType.NONE,
+
+	SearchOnInit: false,
+	IsSearching: false,
 }
 
 function App() {
@@ -70,7 +73,9 @@ function App() {
 	}
 
 	const duplicateTab = (i) => {
-		const newTabContent = tabContent.toSpliced(i + 1, 0, getNewTab(tabContent[i]));
+		const duplicatedTab = getNewTab(tabContent[i]);
+		duplicatedTab["IsSearching"] = false;
+		const newTabContent = tabContent.toSpliced(i + 1, 0, duplicatedTab);
 		setTabContent(newTabContent);
 		setTab(i + 1);
 	}
@@ -104,9 +109,12 @@ function App() {
 			evaluationId, setEvaluationId,
 			qa, setQA
 		}}>
-			<ToastContainer/>
+			<ToastContainer closeOnClick autoClose={2500} pauseOnHover={false}/>
 			<div className='w-full h-dvh flex flex-col'>
-				<TabBar tab={tab} setTab={(tab) => setTab(tab)} tabList={tabContent} onAdd={() => addNewTab()} onDuplicate={duplicateTab} onClose={closeTab}/>
+				<TabBar tab={tab} tabList={tabContent}
+						setTab={(tab) => setTab(tab)}
+						onAdd={() => addNewTab()}
+						onDuplicate={duplicateTab} onClose={closeTab}/>
 				<TabContent content={tabContent[tab]} updateContent={(data) => updateTabContent(tab, data)}/>
 			</div>
 		</AppContext.Provider>

@@ -14,7 +14,7 @@ import {
 	CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { Search, Ban, ChevronsUpDown, ArrowUpDown, Trash, X, Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import TextareaAutosize from 'react-textarea-autosize';
 import { SearchType, SearchTypeRenderer, SearchArguments } from "../SearchType";
@@ -29,6 +29,7 @@ import TranslatedQueryRenderer from "./TranslatedQueryRenderer";
 import ScrollToTop from "./ScrollToTop";
 import BlacklistStub from "./BlacklistStub";
 import { Input } from "@/components/ui/input";
+import Thumbnail from "./Thumbnail";
 
 const SearchOptions = [
 	{name: "Query Search", options: [
@@ -51,8 +52,6 @@ const SearchOptions = [
 const TabContent = ({content, updateContent, tab}) => {
 	const {searchServerUrl, addNewTab} = useAppContext();
 
-	const [isSearching, setIsSearching] = useState(false);
-
 	const {sessionId, evaluationId} = useAppContext();
 
 	const queries = content["Queries"];
@@ -60,11 +59,18 @@ const TabContent = ({content, updateContent, tab}) => {
 	const queryResult = content["Result"];
 	const queryEmpty = Object.keys(queryResult).length === 0;
 
+	const isSearching = content["IsSearching"];
+
+	const [files, setFiles] = useState();
 	const [viewer, setViewer] = useState();
 
 	const updateValue = (name, value) => {
 		content[name] = value;
 		updateContent(content);
+	}
+
+	const onFileChange = (e) => {
+		setFiles(e.target.files);
 	}
 
 	const doValidation = (type) => {
@@ -86,22 +92,18 @@ const TabContent = ({content, updateContent, tab}) => {
 
 	const doSearch = () => {
 		if (searchMethod == SearchType.NONE || !doValidation(searchMethod)) {
-			toast.error("Input is invalid!", {
-				closeOnClick: true,
-			});
+			toast.error("Input is invalid!");
 			return;
 		}
 
 		if (isSearching) {
-			toast.warn("Another search is in process!", {
-				closeOnClick: true,
-			})
+			toast.warn("Another search is in process!")
 			return;
 		}
 
-		setIsSearching(true);
+		updateValue("IsSearching", true);
 
-		SearchHelper(searchMethod, searchServerUrl, content)
+		SearchHelper(searchMethod, searchServerUrl, content, files)
 		.then((res) => {
 			res = SearchResultHelper(searchMethod, res.data);
 			updateValue("Result", res);
@@ -112,20 +114,17 @@ const TabContent = ({content, updateContent, tab}) => {
 				queries.map((q) => {
 					qT.push(res.query[q]);
 				})
-				console.log(qT);
 				updateValue("QueriesTranslated", qT);
 			}
 			else 
 				updateValue("QueriesTranslated", res.query);
 
-			setIsSearching(false);
+			updateValue("IsSearching", false);
 		})
 		.catch((e) => {
 			console.error("Failed to search:", e);
-			toast.error(`Search failed: ${e.message}`, {
-				closeOnClick: true,
-			});
-			setIsSearching(false);
+			toast.error(`Search failed: ${e.message}`);
+			updateValue("IsSearching", false);
 		})
 	}
 
@@ -148,19 +147,16 @@ const TabContent = ({content, updateContent, tab}) => {
 			SubmissionSubmitKIS(sessionId, evaluationId, video, frameMS)
 			.then((res) => {
 				if (res.data.submission != "CORRECT") {
-					toast.error(`Submission wrong`, {
-						closeOnClick: true
-					})
+					toast.error(`Submission is wrong`)
 					return;
 				}
-				toast(`Submit successful!`, {
-					closeOnClick: true
-				})
+				toast(`Submit successful!`)
 			})
 			.catch((err) => {
 				console.log(err);
 				toast.error(`Submit failed: ${err.response.data.description}`, {
-					closeOnClick: true
+					autoClose: 5000,
+					pauseOnHover: true
 				})
 			})
 			return;
@@ -169,19 +165,16 @@ const TabContent = ({content, updateContent, tab}) => {
 		SubmissionSubmitQA(sessionId, evaluationId, qa, video, frameMS)
 		.then((res) => {
 			if (res.data.submission != "CORRECT") {
-				toast.error(`Submission wrong`, {
-					closeOnClick: true
-				})
+				toast.error(`Submission is wrong`)
 				return;
 			}
-			toast(`Submit successful!`, {
-				closeOnClick: true
-			})
+			toast(`Submit successful!`)
 		})
 		.catch((err) => {
 			console.log(err);
 			toast.error(`Submit failed: ${err.response.data.description}`, {
-				closeOnClick: true
+				autoClose: 5000,
+				pauseOnHover: true
 			})
 		})
 		return;
@@ -191,10 +184,33 @@ const TabContent = ({content, updateContent, tab}) => {
 		addNewTab({
 			SearchMethod: SearchType.LOCAL_SEARCH,
 			Queries: [content["Queries"][0]],
-			Video: viewer[0]
+			Video: viewer[0],
+			Translate: content["Translate"],
+			K: 30,
+			SearchOnInit: true,
 		})
 		setViewer(null);
 	}
+
+	const onFrameSearch = (video, frame) => {
+		addNewTab({
+			SearchMethod: SearchType.FRAME_RELATED_SEARCH,
+			Queries: [content["Queries"][0]],
+			Video: video,
+			Frame: frame,
+			Translate: content["Translate"],
+			K: 30,
+			SearchOnInit: true,
+		})
+		setViewer(null);
+	}
+
+	useEffect(() => {
+		if (content["SearchOnInit"]) {
+			doSearch();
+			updateValue("SearchOnInit", false);
+		}
+	}, [content]);
 
 	const removeFromBlacklist = (vid) => {
 		const bl = content["Blacklist"];
@@ -205,6 +221,10 @@ const TabContent = ({content, updateContent, tab}) => {
 		}
 		
 		updateValue("Blacklist", bl);
+	}
+
+	const removeAllBlacklist = () => {
+		updateValue("Blacklist", []);
 	}
 
 	const addBlacklist = () => {
@@ -283,6 +303,7 @@ const TabContent = ({content, updateContent, tab}) => {
 							onClose={() => setViewer(null)}
 							submit={submit}
 							onLocalSearch={onLocalSearch}
+							onFrameSearch={onFrameSearch}
 				/>, document.body)
 			}
 			<div className="flex flex-col w-full grow overflow-hidden">
@@ -331,6 +352,7 @@ const TabContent = ({content, updateContent, tab}) => {
 					<div className="col-span-9 space-y-2">
 						{searchMethod in SearchArguments &&
 							queries
+							.filter((q, i) => SearchArguments[searchMethod].query == 'one' || SearchArguments[searchMethod].query == 'multiple')
 							.filter((q, i) => SearchArguments[searchMethod].query == 'multiple' || i == 0)
 							.map((q, i) => 
 								<div key={i} className="flex gap-2 place-items-start">
@@ -345,7 +367,7 @@ const TabContent = ({content, updateContent, tab}) => {
 										{
 											!queryEmpty && content["QueriesTranslated"] && content["QueriesTranslated"][i] &&
 											<div className={cn("flex gap-1 place-items-start p-2 text-slate-500 border-t border-slate-300",
-																!queryEmpty &&  "hidden group-hover/search:flex group-focus/search:flex group-hover/select:flex")}>
+																!queryEmpty &&  "hidden group-hover/search:flex group-focus/search:flex")}>
 												<ArrowUpDown onClick={() => switchTranslation(i)} className="size-6 min-w-6 min-h-6 p-1 rounded-lg cursor-pointer hover:bg-slate-200"/>
 												<div>{content["QueriesTranslated"][i]}</div>
 												{/* <TranslatedQueryRenderer className="" type={content["ResultMethod"]} data={queryResult} /> */}
@@ -354,7 +376,7 @@ const TabContent = ({content, updateContent, tab}) => {
 									</div>
 									{
 										SearchArguments[searchMethod].weight &&
-										<Input type="number" className="outline-none max-w-20" value={content["Weights"][i]} onChange={(e) => {
+										<Input onKeyDown={onEnterKeydown} type="number" className="outline-none max-w-20" value={content["Weights"][i]} onChange={(e) => {
 											const w = structuredClone(content["Weights"]);
 											w[i] = e.target.value;
 											updateValue("Weights", w);
@@ -371,11 +393,26 @@ const TabContent = ({content, updateContent, tab}) => {
 						}
 						{
 							SearchArguments[searchMethod].query == 'multiple' &&
-							<div className="w-full flex place-items-center justify-center">
+							<div className={cn("w-full flex place-items-center justify-center", !queryEmpty &&  "hidden group-hover/search:flex group-focus/search:flex")}>
 								<div onClick={addNewQueries} className="bg-white rounded-lg p-2 cursor-pointer">
 									<Plus className="size-4 text-slate-400 hover:text-slate-500" />
 								</div>
 							</div>
+						}
+						{
+							SearchArguments[searchMethod].query == 'preview' && 
+
+							<Thumbnail video={content["Video"]} keyframe={content["Frame"]} className={"min-h-0 min-w-0"} hideText={true}/>
+							// <div className={cn("w-full flex place-items-center justify-center", !queryEmpty &&  "hidden group-hover/search:flex group-focus/search:flex")}>
+							// 	<div onClick={addNewQueries} className="bg-white rounded-lg p-2 cursor-pointer">
+							// 		<Plus className="size-4 text-slate-400 hover:text-slate-500" />
+							// 	</div>
+							// </div>
+						}
+						{
+							SearchArguments[searchMethod].query == 'file' && 
+
+							<Input type="file" onChange={onFileChange} className="file:bg-slate-300 file:rounded-md file:px-2 file:hover:bg-slate-200 file:border-0 file:cursor-pointer"/>
 						}
 					</div>
 					<div className="col-span-1 space-y-2">
@@ -398,19 +435,20 @@ const TabContent = ({content, updateContent, tab}) => {
 						SearchArguments[searchMethod].blacklist && 
 						content["Blacklist"].length != 0 && 
 						<div className={cn("col-span-full", !queryEmpty && "hidden group-hover/search:block group-focus/search:block")}>
-							<Collapsible defaultOpen={false} className="">
+							<Collapsible defaultOpen={true} className="">
 								<CollapsibleTrigger className="w-full">
 									<div className="flex gap-2 font-bold place-items-center">
 										<ChevronsUpDown className="size-3"/>
 										<div>Blacklist</div>
+										<BlacklistStub onClose={removeAllBlacklist} className="bg-slate-300 max-w-max text-sm p-0"/>
 									</div>
 								</CollapsibleTrigger>
 								<CollapsibleContent className="flex gap-1 flex-wrap p-1">
-								{
-									content["Blacklist"].map((vid) =>
-										<BlacklistStub video={vid} onClick={() => setViewer([vid, 1])} onClose={() => {removeFromBlacklist(vid)}} className="bg-slate-300 max-w-max text-sm"/>
-									)
-								}
+									{
+										content["Blacklist"].map((vid) =>
+											<BlacklistStub video={vid} onClick={() => setViewer([vid, 1])} onClose={() => {removeFromBlacklist(vid)}} className="bg-slate-300 max-w-max text-sm"/>
+										)
+									}
 								</CollapsibleContent>
 							</Collapsible>
 						</div>
@@ -420,7 +458,7 @@ const TabContent = ({content, updateContent, tab}) => {
 				
 				<div className="min-h-0 relative grow">
 					<ScrollToTop className="overflow-y-scroll h-full">
-						<QueryResult result={queryResult} type={content["ResultMethod"]} setViewer={setViewer}/>
+						<QueryResult result={queryResult} type={content["ResultMethod"]} onFrameSearch={onFrameSearch} setViewer={setViewer}/>
 					</ScrollToTop>
 					{isSearching &&
 						<div className="absolute top-0 bg-black w-full h-full backdrop-blur-sm bg-opacity-30 flex place-items-center justify-center ">

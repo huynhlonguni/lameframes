@@ -5,26 +5,14 @@ import { GetKeyframeInfo, GetNearestKeyframes } from "../utils/keyframe_lookup";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { SearchType, SearchTypeRenderer } from "../SearchType";
-import { ArrowUpFromLine, Copy, FileVideo, Timer } from "lucide-react";
+import { ArrowUpFromLine, FileVideo, Timer } from "lucide-react";
 
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { useAppContext } from "../Context";
 import { Input } from "@/components/ui/input";
   
 
 let ytbPlayer = null;
 
-const VideoViewer = ({viewer, onClose, submit, onLocalSearch}) => {
+const VideoViewer = ({viewer, onClose, submit, onLocalSearch, onFrameSearch}) => {
 	const [currFrame, setCurrFrame] = useState(0);
 
 
@@ -109,9 +97,9 @@ const VideoViewer = ({viewer, onClose, submit, onLocalSearch}) => {
 							<div className="grid grid-rows-2 grid-cols-2 gap-2">
 								<div onClick={() => {
 									navigator.clipboard.writeText(video);
-									toast(<div className="flex gap-1">Copied<div className="font-bold">{video}</div></div>, {
-										closeOnClick: true,
-									});
+									toast(<div className="flex gap-1">
+											Copied<div className="font-bold">{video}</div>
+										</div>);
 								}} 
 									className="p-4 w-full h-full bg-slate-200 hover:bg-slate-300 cursor-pointer rounded-lg"
 								>
@@ -122,9 +110,9 @@ const VideoViewer = ({viewer, onClose, submit, onLocalSearch}) => {
 								</div>
 								<div onClick={() => {
 									navigator.clipboard.writeText(currentFrameMS);
-									toast(<div className="flex gap-1">Copied<div className="font-bold">{currentFrameMS}</div></div>, {
-										closeOnClick: true,
-									});
+									toast(<div className="flex gap-1">
+											Copied<div className="font-bold">{currentFrameMS}</div>
+										</div>);
 								}} 
 									className="p-4 w-full h-full bg-slate-200 hover:bg-slate-300 cursor-pointer rounded-lg"
 								>
@@ -139,7 +127,7 @@ const VideoViewer = ({viewer, onClose, submit, onLocalSearch}) => {
 							</div>
 							<div className="grid col-span-5 grid-cols-5 gap-2">
 								{nearest_keyframes.map((kf, i) => 
-									<Thumbnail key={i} video={video} keyframe={kf[0]} onClick={() => seekTo(kf[2])}/>
+									<Thumbnail onFrameSearch={onFrameSearch} key={i} video={video} keyframe={kf[0]} onClick={() => seekTo(kf[2])}/>
 								)}
 							</div>
 							<div className="grid grid-rows-2 gap-2">

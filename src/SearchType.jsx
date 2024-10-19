@@ -128,7 +128,7 @@ SearchArguments[SearchType.OCR_MATCH] = {
 };
 
 SearchArguments[SearchType.FRAME_RELATED_SEARCH] = {
-	query: 'none',
+	query: 'preview',
 	args: [
 		{ name: 'K', type: 'number' },
 		{ name: 'Video', type: 'text' },
@@ -140,6 +140,6 @@ SearchArguments[SearchType.IMAGE_RELATED_SEARCH] = {
 	query: 'file',
 	args: [
 		{ name: 'K', type: 'number' },
-		{ name: 'Image', type: 'file' }
+		// { name: 'Image', type: 'file' }
 	]
 };

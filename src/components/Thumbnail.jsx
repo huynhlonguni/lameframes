@@ -11,7 +11,7 @@ const colors = [
 	"bg-rose-200",
 ]
 
-const Thumbnail = ({video, keyframe, onClick, className, colorId = -1, hideText = false, children}) => {
+const Thumbnail = ({video, keyframe, onClick, className, colorId = -1, hideText = false, children, onFrameSearch}) => {
 	const {imageServerUrl} = useAppContext();
 
 	const video2 = video.replace("_", "/");
@@ -26,12 +26,13 @@ const Thumbnail = ({video, keyframe, onClick, className, colorId = -1, hideText 
 		<div className={cn("p-2 rounded-lg cursor-pointer text-xs lg:text-sm xl:text-base", color, className)} onClick={onClick}>
 			{validUrl && 
 				<div className="relative">
-					<img src={url} className={cn("w-full rounded-md", false && "h-full max-h-32 max-w-56")}/>
-					<div onClick={(e) => {
+					<img src={url} className={cn("rounded-md", false && "h-full max-h-32 max-w-56")}/>
+					{onFrameSearch && <div onClick={(e) => {
 						e.stopPropagation();
+						onFrameSearch(video, keyframe);
 					}} className="absolute bottom-0 right-0 m-1 p-1 rounded-md bg-white bg-opacity-50 backdrop-blur-lg">
 						<Search className="size-4" />
-					</div>
+					</div>}
 				</div>
 			}
 			{

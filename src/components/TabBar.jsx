@@ -40,54 +40,40 @@ const TabBar = ({tab, setTab, tabList, onDuplicate, onClose, onAdd}) => {
 
 	const login = () => {
 		if (!username) {
-			toast.error("Username is empty", {
-				closeOnClick: true
-			});
+			toast.error("Username is empty");
 			return;
 		}
 		if (!password) {
-			toast.error("Password is empty", {
-				closeOnClick: true
-			});
+			toast.error("Password is empty");
 			return;
 		}
 
 		SubmissionLogin(username, password)
 		.then((res) => {
-			toast("Login successful!", {
-				closeOnClick: true
-			})
+			toast("Login successful!")
 			setUserId(res.data.id);
 			setSessionId(res.data.sessionId);
 			getIds(res.data.sessionId);
 		})
 		.catch((err) => {
-			toast.error(`Login failed: ${err.message}`, {
-				closeOnClick: true
-			})
+			toast.error(`Login failed: ${err.message}`)
 		})
 	}
 
 	const getIds = (sessionId) => {
 		if (!sessionId) {
-			toast.error("Log in first!", {
-				closeOnClick: true
-			});
+			toast.error("Log in first!");
 			return;
 		}
 
 		SubmissionGetEvaluationID(sessionId)
 		.then((res) => {
-			toast("Retrieved Evaluations", {
-				closeOnClick: true
-			})
+			toast("Retrieved Evaluations")
 			setEvaluations(res.data);
 			console.log(res.data);
 		})
 		.catch((err) => {
-			toast.error(`Retrieving Evaluations failed: ${err.message}`, {
-				closeOnClick: true
-			})
+			toast.error(`Retrieving Evaluations failed: ${err.message}`)
 		})
 	}
 

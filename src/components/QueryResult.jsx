@@ -9,12 +9,16 @@ import {
 import { cn } from "@/lib/utils";
   
 
-const QueryResult = ({result, type, setViewer, className}) => {
-	if (type == SearchType.SINGLE_SEARCH || type == SearchType.FUSION_SEARCH || type == SearchType.LOCAL_SEARCH)
+const QueryResult = ({result, type, setViewer, className, onFrameSearch}) => {
+	if (type == SearchType.SINGLE_SEARCH
+		|| type == SearchType.FUSION_SEARCH
+		|| type == SearchType.LOCAL_SEARCH
+		|| type == SearchType.IMAGE_RELATED_SEARCH
+		|| type == SearchType.FRAME_RELATED_SEARCH)
 		return(
 			<div className={cn("grid grid-cols-6 gap-1 p-2", className)}>
 				{result.result.map((r, i) => 
-					<Thumbnail key={i} video={r.video} keyframe={r.frameid} onClick={() => setViewer([r.video, r.frameid])}/>
+					<Thumbnail onFrameSearch={onFrameSearch} key={i} video={r.video} keyframe={r.frameid} onClick={() => setViewer([r.video, r.frameid])}/>
 				)}
 			</div>
 		)
@@ -24,7 +28,7 @@ const QueryResult = ({result, type, setViewer, className}) => {
 			<div className={cn("grid grid-cols-6 gap-1 p-2", className)}>
 				{result.map((r, i) =>
 					<div key={i} className="">
-						<Thumbnail video={r.video} keyframe={r.frameid} onClick={() => setViewer([r.video, r.frameid])}>
+						<Thumbnail onFrameSearch={onFrameSearch} video={r.video} keyframe={r.frameid} onClick={() => setViewer([r.video, r.frameid])}>
 							{r.text}
 						</Thumbnail>
 					</div>
@@ -37,7 +41,7 @@ const QueryResult = ({result, type, setViewer, className}) => {
 			<div className={cn("grid grid-cols-6 gap-1 p-2", className)}>
 				{result.result.map((r, i) => 
 					r.results.map((r2, i2) => 
-						<Thumbnail key={i2} video={r2.video} keyframe={r2.frameid} colorId={i}
+						<Thumbnail onFrameSearch={onFrameSearch} key={i2} video={r2.video} keyframe={r2.frameid} colorId={i}
 									onClick={() => setViewer([r2.video, r2.frameid])}/>
 					)
 				)}
@@ -59,7 +63,7 @@ const QueryResult = ({result, type, setViewer, className}) => {
 						</CollapsibleTrigger>
 						<CollapsibleContent className="grid grid-cols-6 gap-2 min-w-0">
 							{r.frameid.map((f, i2) => 
-								<Thumbnail key={i2} video={r.video} keyframe={f}
+								<Thumbnail onFrameSearch={onFrameSearch} key={i2} video={r.video} keyframe={f}
 											onClick={() => setViewer([r.video, f])}/>
 							)}
 						</CollapsibleContent>
@@ -76,7 +80,7 @@ const QueryResult = ({result, type, setViewer, className}) => {
 						</CollapsibleTrigger>
 						<CollapsibleContent className="flex flex-wrap gap-2 min-w-0 max-w-max">
 							{r.frameid.map((f, i2) => 
-								<Thumbnail key={i2} video={r.video} keyframe={f} hideText={true}
+								<Thumbnail onFrameSearch={onFrameSearch} key={i2} video={r.video} keyframe={f} hideText={true}
 											onClick={() => setViewer([r.video, f])}/>
 							)}
 						</CollapsibleContent>

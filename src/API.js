@@ -97,11 +97,17 @@ export const RelatedFrameSearch = async (url, video, frame, k) => {
 }
 
 export const RelatedImageSearch = async (url, image) => {
-	return axios.post(`${url}/api/related-img-search`, {
+	const formData = new FormData();
+    formData.append("image", image);
+
+	return axios.post(`${url}/api/related-img-search`, formData, {
+		headers: {
+			'Content-Type': 'multipart/form-data'
+		}
 	});
 }
 
-export const SearchHelper = async (type, url, content) => {
+export const SearchHelper = async (type, url, content, files) => {
 	const queries = content["Queries"];
 	const weights = content["Weights"];
 	const translate = content["Translate"];
@@ -135,7 +141,7 @@ export const SearchHelper = async (type, url, content) => {
 		case SearchType.FRAME_RELATED_SEARCH:
 			return RelatedFrameSearch(url, video_name, frame, k);
 		case SearchType.IMAGE_RELATED_SEARCH:
-			return RelatedImageSearch(url, null);
+			return RelatedImageSearch(url, files[0]);
 		default:
 			return null;
 	}
