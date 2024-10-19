@@ -43,8 +43,8 @@ const SearchOptions = [
 		SearchType.OCR_MATCH,
 	]},
 	{name: "Image Search", options: [
-		// SearchType.IMAGE_RELATED_SEARCH,
-		// SearchType.FRAME_RELATED_SEARCH,
+		SearchType.IMAGE_RELATED_SEARCH,
+		SearchType.FRAME_RELATED_SEARCH,
 	]}
 ]
 
