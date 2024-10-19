@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
   
-const ArgumentField = ({arg, value, setValue}) => {
+const ArgumentField = ({arg, value, setValue, onKeyDown}) => {
 	const type = arg.type;
 	const label = arg.name;
 
@@ -52,7 +52,7 @@ const ArgumentField = ({arg, value, setValue}) => {
 	return(
 		<div className="flex gap-2 place-items-center"> 
 			<div className="font-bold text-sm">{label}</div>
-			<Input type={type} className={cn("min-w-0 p-2 rounded-lg outline-none", type == 'number' && 'max-w-[70px]', type == 'text' && 'max-w-20')} value={value} onChange={(e) => setValue(e.target.value)} />
+			<Input onKeyDown={onKeyDown} type={type} className={cn("min-w-0 p-2 rounded-lg outline-none", type == 'number' && 'max-w-[70px]', type == 'text' && 'max-w-20')} value={value} onChange={(e) => setValue(e.target.value)} />
 		</div>
 	)
 };

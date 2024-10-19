@@ -122,6 +122,13 @@ const TabContent = ({content, updateContent, tab}) => {
 		}
 	}
 
+	const onEnterKeydown = (e) => {
+		if (e.keyCode == 13) {
+			e.preventDefault();
+			doSearch();
+		}
+	}
+
 	const submit = (video, frameMS, qa) => {
 		if (!qa || qa == '') {
 			SubmissionSubmitKIS(sessionId, evaluationId, video, frameMS)
@@ -291,7 +298,7 @@ const TabContent = ({content, updateContent, tab}) => {
 							{ searchMethod in SearchArguments && 
 								SearchArguments[searchMethod].args.map((arg, i) => 
 									<div key={i} className="flex flex-col gap-2 justify-center">
-										<ArgumentField arg={arg} value={content[arg.name]} setValue={(newVal) => updateValue(arg.name, newVal)}/>
+										<ArgumentField onKeyDown={onEnterKeydown} arg={arg} value={content[arg.name]} setValue={(newVal) => updateValue(arg.name, newVal)}/>
 									</div>
 								)
 							}
