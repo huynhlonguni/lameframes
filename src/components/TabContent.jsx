@@ -251,6 +251,7 @@ const TabContent = ({content, updateContent, tab}) => {
 	const deleteQueries = (i) => {
 		const q = structuredClone(queries);
 		q.splice(i, 1);
+		if (!q.length) q.push('');
 		updateValue("Queries", q);
 
 		const qT = structuredClone(content["QueriesTranslated"]);
@@ -259,6 +260,7 @@ const TabContent = ({content, updateContent, tab}) => {
 
 		const w = structuredClone(content["Weights"]);
 		w.splice(i, 1);
+		if (!w.length) w.push(1);
 		updateValue("Weights", w);
 	}
 
