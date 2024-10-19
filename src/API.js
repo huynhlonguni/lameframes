@@ -66,18 +66,20 @@ export const HierarchySearch = async (url, query, translate, k1, k2, use_with_fu
 	});
 }
 
-export const SubtitleMatch = async (url, query) => {
+export const SubtitleMatch = async (url, query, limit) => {
 	return axios.get(`${url}/api/match-sub-es`, {
 		params: {
-			query: query
+			query: query,
+			limit: limit
 		}
 	});
 }
 
-export const OCRMatch = async (url, query) => {
+export const OCRMatch = async (url, query, limit) => {
 	return axios.get(`${url}/api/match-ocr-es`, {
 		params: {
-			query: query
+			query: query,
+			limit: limit
 		}
 	});
 }
@@ -112,6 +114,7 @@ export const SearchHelper = async (type, url, content) => {
 	const fact_queries = content["Queries"];
 	const sort = content["Sort"];
 	const black_list = content["Blacklist"];
+	const limit = content["Limit"];
 
 	switch (type) {
 		case SearchType.SINGLE_SEARCH:
@@ -125,9 +128,9 @@ export const SearchHelper = async (type, url, content) => {
 		case SearchType.HIERARCHY_SEARCH:
 			return HierarchySearch(url, query, translate, k1, k2, use_with_fusion, fact_queries, sort);
 		case SearchType.SUBTITLE_MATCH:
-			return SubtitleMatch(url, query);
+			return SubtitleMatch(url, query, limit);
 			case SearchType.OCR_MATCH:
-			return OCRMatch(url, query);
+			return OCRMatch(url, query, limit);
 		case SearchType.FRAME_RELATED_SEARCH:
 			return RelatedFrameSearch(url, video_name, frame, k);
 		case SearchType.IMAGE_RELATED_SEARCH:

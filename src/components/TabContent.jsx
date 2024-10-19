@@ -88,6 +88,14 @@ const TabContent = ({content, updateContent, tab}) => {
 			});
 			return;
 		}
+
+		if (isSearching) {
+			toast.warn("Another search is in process!", {
+				closeOnClick: true,
+			})
+			return;
+		}
+
 		setIsSearching(true);
 
 		SearchHelper(searchMethod, searchServerUrl, content)

@@ -114,12 +114,16 @@ SearchArguments[SearchType.HIERARCHY_SEARCH] = {
 
 SearchArguments[SearchType.SUBTITLE_MATCH] = {
 	single: true,
-	args: []
+	args: [
+		{ name: 'Limit', type: 'number' },
+	]
 };
 
 SearchArguments[SearchType.OCR_MATCH] = {
 	single: true,
-	args: []
+	args: [
+		{ name: 'Limit', type: 'number' },
+	]
 };
 
 SearchArguments[SearchType.FRAME_RELATED_SEARCH] = {
