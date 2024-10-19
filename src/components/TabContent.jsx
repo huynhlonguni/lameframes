@@ -224,7 +224,7 @@ const TabContent = ({content, updateContent, tab}) => {
 			document.body)
 		}
 			<div className="flex flex-col w-full grow overflow-hidden">
-				<div className={cn("w-full bg-slate-200 grid grid-cols-12 gap-4 p-4 z-20", !queryEmpty && "shadow-lg")}>
+				<div className={cn("group w-full bg-slate-200 grid grid-cols-12 gap-4 p-4 z-20", !queryEmpty && "shadow-lg")}>
 					<div className="col-span-2 flex flex-col justify-start gap-2">
 						<div>
 							<Select value={content['SearchMethod']}
@@ -254,23 +254,14 @@ const TabContent = ({content, updateContent, tab}) => {
 								</SelectContent>
 							</Select>
 						</div>
-						<div className="grid grid-cols-2 shrink gap-2 empty:hidden">
+						<div className="flex flex-wrap justify-between gap-2 empty:hidden">
 							{ searchMethod in SearchArguments && 
 								SearchArguments[searchMethod].args.map((arg, i) => 
-									<div key={i} className="flex flex-col gap-2">
+									<div key={i} className="flex flex-col gap-2 justify-center">
 										<ArgumentField arg={arg} value={content[arg.name]} setValue={(newVal) => updateValue(arg.name, newVal)}/>
 									</div>
 								)
 							}
-							<div className="col-span-full pt-2">
-								{ searchMethod in SearchArguments &&  
-									SearchArguments[searchMethod].blacklist &&
-									<div onClick={addBlacklist} className={cn("flex w-full place-items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-red-600 hover:bg-red-500 text-white", queryEmpty && 'cursor-not-allowed bg-slate-400')}>
-										<Ban className="size-4" />
-										<div>Add To Blacklist & Search</div>
-									</div>
-								}
-							</div>
 						</div>
 					</div>
 					<div className="col-span-9">
@@ -291,11 +282,17 @@ const TabContent = ({content, updateContent, tab}) => {
 						</div>
 						
 					</div>
-					<div className="col-span-1">
+					<div className="col-span-1 space-y-2">
 						<div onClick={doSearch} className="flex cursor-pointer place-items-center justify-center gap-2 p-2 rounded-lg bg-green-700 hover:bg-green-600 text-white">
 							<Search className="size-4 min-w-4 min-h-4" />
 							<div className="hidden xl:block">Search</div>
 						</div>
+						{ searchMethod in SearchArguments && SearchArguments[searchMethod].blacklist &&
+							<div onClick={addBlacklist} className={cn("flex w-full place-items-center justify-center gap-2 p-2 rounded-lg cursor-pointer bg-red-600 hover:bg-red-500 text-white", queryEmpty && 'cursor-not-allowed bg-slate-400')}>
+								<Ban className="size-4 min-w-4 min-h-4" />
+								<div className="hidden xl:block">Blacklist</div>
+							</div>
+						}
 					</div>
 					{
 						searchMethod in SearchArguments &&  

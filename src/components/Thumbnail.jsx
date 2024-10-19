@@ -2,7 +2,16 @@ import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 import { useAppContext } from "../Context";
 
-const Thumbnail = ({video, keyframe, onClick, className, onClose}) => {
+const colors = [
+	"bg-green-200",
+	"bg-cyan-200",
+	"bg-orange-200",
+	"bg-yellow-200",
+	"bg-violet-200",
+	"bg-rose-200",
+]
+
+const Thumbnail = ({video, keyframe, onClick, className, onClose, colorId = -1}) => {
 	const {imageServerUrl} = useAppContext();
 
 	const video2 = video.replace("_", "/");
@@ -11,9 +20,13 @@ const Thumbnail = ({video, keyframe, onClick, className, onClose}) => {
  
 	const validUrl = imageServerUrl && video2 && keyframe;
 
+	const color = colors[colorId % 6] ?? 'bg-slate-200'
+
 	return(
-		<div className={cn("w-full p-2 rounded-lg bg-slate-200 cursor-pointer text-xs lg:text-sm xl:text-base", className)} onClick={onClick}>
-			{validUrl && <img src={url} className="w-full rounded-md"/>}
+		<div className={cn("p-2 rounded-lg cursor-pointer text-xs lg:text-sm xl:text-base", color, className)} onClick={onClick}>
+			{validUrl && 
+				<img src={url} className={cn("w-full rounded-md", false && "h-full max-h-32 max-w-56")}/>
+			}
 			<div className="flex justify-between">
 				<div>{video}</div>
 				<div>{keyframe}</div>
