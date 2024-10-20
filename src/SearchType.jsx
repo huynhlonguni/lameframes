@@ -58,7 +58,7 @@ export const SearchTypeRenderer = ({type, className}) => {
 export const SearchArguments = {};
 SearchArguments[SearchType.SINGLE_SEARCH] = {
 	query: 'one',
-	blacklist: true,
+	// blacklist: true,
 	args: [
 		{ name: 'K', type: 'number' },
 		{ name: 'Translate', type: 'checkbox' }
@@ -86,7 +86,7 @@ SearchArguments[SearchType.LOCAL_SEARCH] = {
 
 SearchArguments[SearchType.GROUP_SEARCH] = {
 	query: 'multiple',
-	blacklist: true,
+	// blacklist: true,
 	args: [
 		{ name: 'K', type: 'number' },
 		{ name: 'Step', type: 'number' },
