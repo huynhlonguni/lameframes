@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 let ytbPlayer = null;
 
 const VideoViewer = ({viewer, onClose, submit, onLocalSearch, onFrameSearch}) => {
-	const [currFrame, setCurrFrame] = useState(0);
 
 
 	const [qa, setQA] = useState('');
@@ -26,6 +25,9 @@ const VideoViewer = ({viewer, onClose, submit, onLocalSearch, onFrameSearch}) =>
 	const second = info[0];
 	const frame = info[1];
 	const fps = info[2] ?? GetKeyframeInfo(video, 1)[2] ?? 25.0;
+
+	const [currFrame, setCurrFrame] = useState(frame);
+
 
 	const nearest_keyframes = GetNearestKeyframes(video, currFrame);
 
