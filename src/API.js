@@ -96,9 +96,10 @@ export const RelatedFrameSearch = async (url, video, frame, k) => {
 	});
 }
 
-export const RelatedImageSearch = async (url, image) => {
+export const RelatedImageSearch = async (url, image, k) => {
 	const formData = new FormData();
     formData.append("image", image);
+    formData.append("k", k);
 
 	return axios.post(`${url}/api/related-img-search`, formData, {
 		headers: {
@@ -141,7 +142,7 @@ export const SearchHelper = async (type, url, content, files) => {
 		case SearchType.FRAME_RELATED_SEARCH:
 			return RelatedFrameSearch(url, video_name, frame, k);
 		case SearchType.IMAGE_RELATED_SEARCH:
-			return RelatedImageSearch(url, files[0]);
+			return RelatedImageSearch(url, files[0], k);
 		default:
 			return null;
 	}
