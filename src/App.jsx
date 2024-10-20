@@ -115,7 +115,7 @@ function App() {
 						setTab={(tab) => setTab(tab)}
 						onAdd={() => addNewTab()}
 						onDuplicate={duplicateTab} onClose={closeTab}/>
-				<TabContent content={tabContent[tab]} updateContent={(data) => updateTabContent(tab, data)}/>
+				<TabContent tab={tab} tabContent={tabContent} updateTabContent={(tab, data) => updateTabContent(tab, data)}/>
 			</div>
 		</AppContext.Provider>
 	)

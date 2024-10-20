@@ -11,16 +11,16 @@ export const CheckSearchServer = async (url) => {
 	});
 }
 
-export const SingleSearch = async (url, query, translate, k, black_list) => {
+export const SingleSearch = async (userData, url, query, translate, k, black_list) => {
 	return axios.post(`${url}/api/single-search`, {
 		query: query,
 		translate: translate,
 		k: k,
 		black_list: black_list,
-	});
+	}, userData);
 }
 
-export const FusionSearch = async (url, queries, weights, translate, k) => {
+export const FusionSearch = async (userData, url, queries, weights, translate, k) => {
 	const qs = {};
 	queries.map((q, i) => {
 		qs[q] = parseInt(weights[i]);
@@ -29,10 +29,10 @@ export const FusionSearch = async (url, queries, weights, translate, k) => {
 		queries: qs,
 		translate: translate,
 		k: k
-	});
+	}, userData);
 }
 
-export const LocalSearch = async (url, query, translate, video_name, k, use_with_fusion, fact_queries) => {
+export const LocalSearch = async (userData, url, query, translate, video_name, k, use_with_fusion, fact_queries) => {
 	return axios.post(`${url}/api/local-search`, {
 		query: query,
 		translate: translate,
@@ -40,10 +40,10 @@ export const LocalSearch = async (url, query, translate, video_name, k, use_with
 		k: k,
 		use_with_fusion: use_with_fusion,
 		fact_queries: fact_queries
-	});
+	}, userData);
 }
 
-export const GroupSearch = async (url, queries, translate, step, k, sort, black_list) => {
+export const GroupSearch = async (userData, url, queries, translate, step, k, sort, black_list) => {
 	return axios.post(`${url}/api/multi-scene-search`, {
 		queries: queries,
 		translate: translate,
@@ -51,10 +51,10 @@ export const GroupSearch = async (url, queries, translate, step, k, sort, black_
 		k: k,
 		black_list: black_list,
 		sort_by: sort
-	});
+	}, userData);
 }
 
-export const HierarchySearch = async (url, query, translate, k1, k2, use_with_fusion, fact_queries, sort) => {
+export const HierarchySearch = async (userData, url, query, translate, k1, k2, use_with_fusion, fact_queries, sort) => {
 	return axios.post(`${url}/api/hierarchical-search`, {
 		query: query,
 		translate: translate,
@@ -63,10 +63,10 @@ export const HierarchySearch = async (url, query, translate, k1, k2, use_with_fu
 		use_with_fusion: use_with_fusion,
 		fact_queries: fact_queries,
 		sort_by: sort
-	});
+	}, userData);
 }
 
-export const SubtitleMatch = async (url, query, limit) => {
+export const SubtitleMatch = async (userData, url, query, limit) => {
 	return axios.get(`${url}/api/match-sub-es`, {
 		params: {
 			query: query,
@@ -75,40 +75,43 @@ export const SubtitleMatch = async (url, query, limit) => {
 	});
 }
 
-export const OCRMatch = async (url, query, limit) => {
+export const OCRMatch = async (userData, url, query, limit) => {
 	return axios.get(`${url}/api/match-ocr-es`, {
 		params: {
 			query: query,
 			limit: limit
-		}
+		}, userData
 	});
 }
 
-export const SubtitleIndexDrop = async (url) => {
+export const SubtitleIndexDrop = async (userData, url) => {
 	return axios.delete(`${url}/api/drop-index-es`);
 }
 
-export const RelatedFrameSearch = async (url, video, frame, k) => {
+export const RelatedFrameSearch = async (userData, url, video, frame, k) => {
 	return axios.post(`${url}/api/related-frame-search`, {
 		video: video,
 		frame_id: frame,
 		k: k,
-	});
+	}, userData);
 }
 
-export const RelatedImageSearch = async (url, image, k) => {
+export const RelatedImageSearch = async (userData, url, image, k) => {
 	const formData = new FormData();
     formData.append("image", image);
     formData.append("k", k);
 
-	return axios.post(`${url}/api/related-img-search`, formData, {
+	const headers = {
 		headers: {
 			'Content-Type': 'multipart/form-data'
 		}
-	});
+	};
+	const data = {...headers, ...userData}
+
+	return axios.post(`${url}/api/related-img-search`, formData, data);
 }
 
-export const SearchHelper = async (type, url, content, files) => {
+export const SearchHelper = async (userData, type, url, content, files) => {
 	const queries = content["Queries"];
 	const weights = content["Weights"];
 	const translate = content["Translate"];
@@ -126,23 +129,23 @@ export const SearchHelper = async (type, url, content, files) => {
 
 	switch (type) {
 		case SearchType.SINGLE_SEARCH:
-			return SingleSearch(url, queries[0], translate, k, black_list);
+			return SingleSearch(userData, url, queries[0], translate, k, black_list);
 		case SearchType.FUSION_SEARCH:
-			return FusionSearch(url, queries, weights, translate, k);
+			return FusionSearch(userData, url, queries, weights, translate, k);
 		case SearchType.LOCAL_SEARCH:
-			return LocalSearch(url, queries[0], translate, video_name, k, use_with_fusion, fact_queries);
+			return LocalSearch(userData, url, queries[0], translate, video_name, k, use_with_fusion, fact_queries);
 		case SearchType.GROUP_SEARCH:
-			return GroupSearch(url, queries, translate, step, k, sort, black_list);
+			return GroupSearch(userData, url, queries, translate, step, k, sort, black_list);
 		case SearchType.HIERARCHY_SEARCH:
-			return HierarchySearch(url, queries[0], translate, k1, k2, use_with_fusion, fact_queries, sort);
+			return HierarchySearch(userData, url, queries[0], translate, k1, k2, use_with_fusion, fact_queries, sort);
 		case SearchType.SUBTITLE_MATCH:
-			return SubtitleMatch(url, queries[0], limit);
+			return SubtitleMatch(userData, url, queries[0], limit);
 		case SearchType.OCR_MATCH:
-			return OCRMatch(url, queries[0], limit);
+			return OCRMatch(userData, url, queries[0], limit);
 		case SearchType.FRAME_RELATED_SEARCH:
-			return RelatedFrameSearch(url, video_name, frame, k);
+			return RelatedFrameSearch(userData, url, video_name, frame, k);
 		case SearchType.IMAGE_RELATED_SEARCH:
-			return RelatedImageSearch(url, files[0], k);
+			return RelatedImageSearch(userData, url, files[0], k);
 		default:
 			return null;
 	}

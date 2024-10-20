@@ -49,10 +49,12 @@ const SearchOptions = [
 	]}
 ]
 
-const TabContent = ({content, updateContent, tab}) => {
+const TabContent = ({tabContent, updateTabContent, tab}) => {
 	const {searchServerUrl, addNewTab} = useAppContext();
 
 	const {sessionId, evaluationId} = useAppContext();
+
+	const content = tabContent[tab];
 
 	const queries = content["Queries"];
 	const searchMethod = content["SearchMethod"];
@@ -64,9 +66,11 @@ const TabContent = ({content, updateContent, tab}) => {
 	const [files, setFiles] = useState();
 	const [viewer, setViewer] = useState();
 
-	const updateValue = (name, value) => {
-		content[name] = value;
-		updateContent(content);
+	const updateValue = (name, value, c = null, t = null) => {
+		if (!c) c = content;
+		if (t == null) t = tab;
+		c[name] = value;
+		updateTabContent(t, c);
 	}
 
 	const onFileChange = (e) => {
@@ -103,28 +107,40 @@ const TabContent = ({content, updateContent, tab}) => {
 
 		updateValue("IsSearching", true);
 
-		SearchHelper(searchMethod, searchServerUrl, content, files)
+		SearchHelper({
+			tab: tab,
+			searchMethod: searchMethod,
+			tabContent: structuredClone(content)
+
+		}, searchMethod, searchServerUrl, content, files)
 		.then((res) => {
+			const tabId = res.config.tab;
+			const tabCont = res.config.tabContent;
+
 			res = SearchResultHelper(searchMethod, res.data);
-			updateValue("Result", res);
-			updateValue("ResultMethod", searchMethod);
+			updateValue("Result", res, tabCont, tabId);
+			updateValue("ResultMethod", searchMethod, tabCont, tabId);
 
 			if (searchMethod == SearchType.FUSION_SEARCH) {
 				const qT = [];
 				queries.map((q) => {
 					qT.push(res.query[q]);
 				})
-				updateValue("QueriesTranslated", qT);
+				updateValue("QueriesTranslated", qT, tabCont, tabId);
 			}
 			else 
-				updateValue("QueriesTranslated", res.query);
+				updateValue("QueriesTranslated", res.query, tabCont, tabId);
 
-			updateValue("IsSearching", false);
+			updateValue("IsSearching", false, tabCont, tabId);
 		})
 		.catch((e) => {
+			const tabId = e.config.tab;
+			const tabCont = res.config.tabContent;
+
 			console.error("Failed to search:", e);
 			toast.error(`Search failed: ${e.message}`);
-			updateValue("IsSearching", false);
+
+			updateValue("IsSearching", false, tabCont, tabId);
 		})
 	}
 
